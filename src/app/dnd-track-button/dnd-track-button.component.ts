@@ -12,6 +12,7 @@ import { Track } from '../track';
 import { YoutubeTrack } from '../youtube-track';
 import { EmptyTrack } from '../empty-track';
 import { LocalTrack } from '../local-track';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 interface IMusicFile {
   parent: IMusicFile;
@@ -70,7 +71,7 @@ export class DndTrackButtonComponent implements OnInit {
   youtubeStart: string;
   youtubeEnd: string;
 
-  constructor() { }
+  constructor(private modalService: NgbModal) { }
 
   ngOnInit() {
   }
@@ -79,12 +80,19 @@ export class DndTrackButtonComponent implements OnInit {
     this.trackDeleted.emit(this.track);
   }
 
-  choose() {
-    this.dialogOpen = true;
+  choose(trackModal) {
+    this.modalService.open(trackModal, { size: 'lg' }).result.then(result => {
+      switch (result) {
+        case 'youtube':
+          this.addYoutube();
+          break;
+      }
+    }, reason => {
+    });
+
     if (chrome.storage)
       this.loadLocalTracks();
 
-    console.log(typeof this.track);
     switch (this.track.constructor.name) {
       case 'YoutubeTrack':
         let t = this.track as YoutubeTrack;
@@ -102,10 +110,6 @@ export class DndTrackButtonComponent implements OnInit {
     }
   }
 
-  closeDialog() {
-    this.dialogOpen = false;
-  }
-
   addYoutube() {
     let ytTrack = new YoutubeTrack(this.youtubeUrl, this.youtubeStart, this.youtubeEnd, this.youtubeTitle);
     this.youtubeUrl = '';
@@ -114,7 +118,6 @@ export class DndTrackButtonComponent implements OnInit {
     this.youtubeEnd = undefined;
 
     this.trackSelected.emit(ytTrack);
-    this.closeDialog();
   }
 
   loadLocalTracks() {

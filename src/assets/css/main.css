@@ -117,6 +117,8 @@ dnd-track-button:after {
 	margin-bottom: 6px;
 	color: #fff;
 	font-weight: bold;
+	font-size: 1.2em;
+	cursor: pointer;
 	position: relative;
 }
 .playlist-list .playlist-row .bg-image {
@@ -130,13 +132,14 @@ dnd-track-button:after {
 	display: block;
 	position: absolute;
 }
-.playlist-list .playlist-row div {
-	padding: 30px;
-}
-.playlist-list .playlist-row div:first-child:hover {
-	opacity: 1.0;
-}
-.playlist-list .playlist-row div:first-child {
+.playlist-list .playlist-row > div { padding: 30px; }
+.playlist-list .playlist-row > div:first-child:hover { opacity: 1.0; }
+.playlist-list .playlist-row > div:first-child {
 	opacity: 0.6;
 	cursor: pointer;
 }
+
+[hidden] {
+	display: none !important;
+}
+

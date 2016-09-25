@@ -3,13 +3,15 @@
 
         <div class="col-md-3 location-switcher">
             <div class="playlist-list">
-                <div *ngFor="let playlist of playlists" [class.active]="currentPlaylist == playlist" class="playlist-row clearfix">
-                    <div class="pull-right"><span class="glyphicon glyphicon-play"></span></div>
-                    <div [textContent]="playlist.title()" (click)="currentPlaylist = playlist"></div>
-                    <span [style.backgroundImage]="'url(' + playlist.backgroundUrl + ')'" class="bg-image"></span>
-                </div>
+                <dnd-playlist-selector
+                    [playlist]="playlist"
+                    (selected)="currentPlaylist = playlist"
+                    *ngFor="let playlist of playlists">
+                </dnd-playlist-selector>
             </div>
-            <button (click)="addPlaylist()" class="btn btn-block btn-default">Add Playlist</button>
+            <button (click)="addPlaylist()" class="btn btn-block btn-default">
+                Add Playlist
+            </button>
         </div>
 
         <div class="col-md-6 right-panel" *ngIf="currentPlaylist">
@@ -66,3 +68,5 @@
 
     </div>
 </div>
+
+<template ngbModalContainer></template>

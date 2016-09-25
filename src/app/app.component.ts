@@ -1,4 +1,4 @@
-import { HostListener, Component } from '@angular/core';
+import { ElementRef, HostListener, Component } from '@angular/core';
 import { Track } from './track';
 import { EmptyTrack } from './empty-track';
 import { Playlist } from './playlist';
@@ -11,6 +11,9 @@ import { Playlist } from './playlist';
 export class AppComponent {
   playlists: Array<Playlist> = [];
   currentPlaylist: Playlist = null;
+
+  constructor() {
+  }
 
   ngOnInit() {
     this.load();
