@@ -1,0 +1,20 @@
+{
+  "name": "DnD Music Mixer",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": [
+        "js/background.js"
+      ],
+      "persistent": false
+    }
+  },
+  "sandbox": {
+    "pages": ["youtube.html"]
+  },
+  "permissions": [
+    { "fileSystem": ["write", "retainEntries", "directory"] },
+    "storage"
+  ]
+}

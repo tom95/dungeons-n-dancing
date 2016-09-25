@@ -1,3 +1,68 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-3 location-switcher">
+            <div class="playlist-list">
+                <div *ngFor="let playlist of playlists" [class.active]="currentPlaylist == playlist" class="playlist-row clearfix">
+                    <div class="pull-right"><span class="glyphicon glyphicon-play"></span></div>
+                    <div [textContent]="playlist.title()" (click)="currentPlaylist = playlist"></div>
+                    <span [style.backgroundImage]="'url(' + playlist.backgroundUrl + ')'" class="bg-image"></span>
+                </div>
+            </div>
+            <button (click)="addPlaylist()" class="btn btn-block btn-default">Add Playlist</button>
+        </div>
+
+        <div class="col-md-6 right-panel" *ngIf="currentPlaylist">
+
+            <div class="row track-list-editor">
+                <div class="col-md-12">
+                    <h2 [textContent]="currentPlaylist.title()"><!--Calm <small>| Hostile City</small>--></h2>
+                    <form>
+                        <div class="form-group">
+                            <label>Tracks</label>
+
+                            <dnd-track-button
+                                [track]="track"
+                                (trackSelected)="replaceTrack($event, i)"
+                                (trackDeleted)="deleteTrack($event, i)"
+                                *ngFor="let track of currentPlaylist.items; let i = index">
+                            </dnd-track-button>
+
+                            <button class="btn btn-default btn-block"
+                                (click)="addTrack()">Add Track</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mood-controls">
+                <div class="col-md-12">
+                    <div style="background-color: #FFF59D" class="mood" data-title="Mysterious"></div>
+                    <div style="background-color: #FFEB3B" class="mood" data-title="Scary"></div>
+                    <div style="background-color: #D4E157" class="mood active" data-title="Calm"></div>
+                    <div style="background-color: #FB8C00" class="mood" data-title="Battle"></div>
+                    <div style="background-color: #BF360C" class="mood" data-title="Defeat"></div>
+                    <div style="background-color: #FFEB3B" class="mood" data-title="Victory"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3" *ngIf="currentPlaylist">
+            <table class="table table-striped">
+                <tr><th colspan="2">Queue</th></tr>
+                <tr [class.success]="currentPlaylist.currentTrack == track" *ngFor="let track of currentPlaylist.items; let i = index">
+                    <td [textContent]="i + 1"></td>
+                    <td [textContent]="track.title()"></td>
+                </tr>
+            </table>
+
+            <div class="play-controls" uib-popover-template="'/templates/queue.html'" popover-trigger="outsideClick">
+                <span class="glyphicon glyphicon-backward"></span>
+                <span class="glyphicon" [class.glyphicon-pause]="playing" [class.glyphicon-play]="!playing" (click)="currentPlaylist.play(1000)"></span>
+                <span class="glyphicon glyphicon-forward" (click)="currentPlaylist.skipForward()"></span>
+            </div>
+        </div>
+
+    </div>
+</div>
