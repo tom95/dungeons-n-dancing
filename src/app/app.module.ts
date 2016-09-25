@@ -5,16 +5,20 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { DndTrackButtonComponent } from './dnd-track-button/dnd-track-button.component';
+import { PlaylistSelectorComponent } from './playlist-selector/playlist-selector.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DndTrackButtonComponent
+    DndTrackButtonComponent,
+    PlaylistSelectorComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

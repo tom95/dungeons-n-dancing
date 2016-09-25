@@ -1,80 +1,76 @@
-<div class="btn-group pull-right">
-	<button (click)="choose()" class="btn btn-xs btn-default">Choose Track</button>
+<div class="btn-group pull-xs-right">
+	<button (click)="choose(trackModal)" class="btn btn-xs btn-default">Choose Track</button>
 	<button (click)="remove()" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-remove"></span></button>
 </div>
 <span [textContent]="track.title()"></span>
 
-<div class="modal fade in" *ngIf="dialogOpen" style="display:block">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" (click)="closeDialog()"><span>&times;</span></button>
-				<h4 class="modal-title">Select Music File ...</h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
+<template #trackModal let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<button type="button" class="close" (click)="d()"><span>&times;</span></button>
+		<h4 class="modal-title">Select Music File ...</h4>
+	</div>
+	<div class="modal-body">
+		<div class="row">
 
-					<div class="col-md-2">
-						<div class="list-group">
-							<a href="#" (click)="activeTab = 'local'" [class.active]="activeTab == 'local'" class="list-group-item">Local</a>
-							<a href="#" (click)="activeTab = 'youtube'" [class.active]="activeTab == 'youtube'" class="list-group-item">YouTube</a>
-							<a href="#" (click)="activeTab = 'spotify'" [class.active]="activeTab == 'spotify'" class="list-group-item">Spotify</a>
-						</div>
-					</div>
-
-					<div class="col-md-10">
-						<div [hidden]="activeTab != 'local'">
-							<!--<button class="btn btn-default pull-right" (click)="chooseMusicDirectory()">
-								<span class="glyphicon glyphicon-music"></span> Change Music Directory
-							</button>
-
-							<div ng-show="!directoryRoot" class="text-center">
-								<h1><span class="glyphicon glyphicon-music"></span></h1>
-								<button class="btn btn-default btn-lg" (click)="chooseMusicDirectory()">
-									Select Your Music Directory
-								</button>
-							</div>
-							<div ng-show="directoryRoot">
-								<ul>
-									<li ng-repeat="entry in directoryRoot.entries" ng-include="'file-entry.html'"></li>
-								</ul>
-							</div>-->
-						</div>
-
-						<div [hidden]="activeTab != 'youtube'">
-							<div>
-
-								<div class="form-group">
-									<label>Enter any YouTube URL or video ID</label>
-									<input class="form-control" type="text" placeholder="YouTube URL or Video ID" [(ngModel)]="youtubeUrl">
-								</div>
-
-								<div class="form-group">
-									<label>Title</label>
-									<input class="form-control" type="text" placeholder="Enter a title for the track" [(ngModel)]="youtubeTitle">
-								</div>
-
-								<div class="form-group">
-									<label>Specify start end end time (optional)</label>
-									<div>
-										<input class="form-control col-md-6" style="max-width: 50%;" placeholder="Start 0:00" [(ngModel)]="youtubeStart">
-										<input class="form-control col-md-6" style="max-width: 50%;" placeholder="End 0:00" [(ngModel)]="youtubeEnd">
-									</div>
-								</div>
-
-							</div>
-
-							<br><br>
-							<button class="btn btn-primary" (click)="addYoutube()">Save Track</button>
-						</div>
-
-						<div [hidden]="activeTab != 'spotify'">
-							Spotify
-						</div>
-
-					</div>
+			<div class="col-md-2">
+				<div class="list-group">
+					<a href="#" (click)="activeTab = 'local'" [class.active]="activeTab == 'local'" class="list-group-item">Local</a>
+					<a href="#" (click)="activeTab = 'youtube'" [class.active]="activeTab == 'youtube'" class="list-group-item">YouTube</a>
+					<a href="#" (click)="activeTab = 'spotify'" [class.active]="activeTab == 'spotify'" class="list-group-item">Spotify</a>
 				</div>
+			</div>
+
+			<div class="col-md-10">
+				<div [hidden]="activeTab != 'local'">
+					<!--<button class="btn btn-default pull-xs-right" (click)="chooseMusicDirectory()">
+						<span class="glyphicon glyphicon-music"></span> Change Music Directory
+					</button>
+
+					<div ng-show="!directoryRoot" class="text-center">
+						<h1><span class="glyphicon glyphicon-music"></span></h1>
+						<button class="btn btn-default btn-lg" (click)="chooseMusicDirectory()">
+							Select Your Music Directory
+						</button>
+					</div>
+					<div ng-show="directoryRoot">
+						<ul>
+							<li ng-repeat="entry in directoryRoot.entries" ng-include="'file-entry.html'"></li>
+						</ul>
+					</div>-->
+				</div>
+
+				<div [hidden]="activeTab != 'youtube'">
+					<div>
+
+						<div class="form-group">
+							<label>Enter any YouTube URL or video ID</label>
+							<input class="form-control" type="text" placeholder="YouTube URL or Video ID" [(ngModel)]="youtubeUrl">
+						</div>
+
+						<div class="form-group">
+							<label>Title</label>
+							<input class="form-control" type="text" placeholder="Enter a title for the track" [(ngModel)]="youtubeTitle">
+						</div>
+
+						<div class="form-group">
+							<label>Specify start end end time (optional)</label>
+							<div>
+								<input class="form-control col-md-6" style="max-width: 50%;" placeholder="Start 0:00" [(ngModel)]="youtubeStart">
+								<input class="form-control col-md-6" style="max-width: 50%;" placeholder="End 0:00" [(ngModel)]="youtubeEnd">
+							</div>
+						</div>
+
+					</div>
+
+					<br><br>
+					<button class="btn btn-primary" (click)="c('youtube')">Save Track</button>
+				</div>
+
+				<div [hidden]="activeTab != 'spotify'">
+					Spotify
+				</div>
+
 			</div>
 		</div>
 	</div>
-</div>
+</template>

@@ -1,0 +1,16 @@
+<template #playlistSettingsPopover>
+  {{ playlist.title() }}
+</template>
+
+<div class="playlist-row clearfix" (mouseenter)="hovered = true" (mouseleave)="hovered = false">
+  <div class="pull-xs-right"><span class="glyphicon glyphicon-play"></span></div>
+  <div (click)="selected.emit()">
+    {{ playlist.title() }}
+    <button [hidden]="!hovered"
+            [ngbPopover]="playlistSettingsPopover"
+            class="btn btn-default btn-xs">
+      <span class="glyphicon glyphicon-cog"></span>
+    </button>
+  </div>
+  <span [style.backgroundImage]="'url(' + playlist.backgroundUrl + ')'" class="bg-image"></span>
+</div>
