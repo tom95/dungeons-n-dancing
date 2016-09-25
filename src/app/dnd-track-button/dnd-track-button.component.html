@@ -21,50 +21,16 @@
 			</div>
 
 			<div class="col-md-10">
-				<div [hidden]="activeTab != 'local'">
-					<!--<button class="btn btn-default pull-xs-right" (click)="chooseMusicDirectory()">
-						<span class="mdi mdi-music-note"></span> Change Music Directory
-					</button>
 
-					<div ng-show="!directoryRoot" class="text-center">
-						<h1><span class="mdi mdi-music-note"></span></h1>
-						<button class="btn btn-default btn-lg" (click)="chooseMusicDirectory()">
-							Select Your Music Directory
-						</button>
-					</div>
-					<div ng-show="directoryRoot">
-						<ul>
-							<li ng-repeat="entry in directoryRoot.entries" ng-include="'file-entry.html'"></li>
-						</ul>
-					</div>-->
-				</div>
+				<dnd-track-chooser-local
+					[hidden]="activeTab != 'local'">
+				</dnd-track-chooser-local>
 
-				<div [hidden]="activeTab != 'youtube'">
-					<div>
-
-						<div class="form-group">
-							<label>Enter any YouTube URL or video ID</label>
-							<input class="form-control" type="text" placeholder="YouTube URL or Video ID" [(ngModel)]="youtubeUrl">
-						</div>
-
-						<div class="form-group">
-							<label>Title</label>
-							<input class="form-control" type="text" placeholder="Enter a title for the track" [(ngModel)]="youtubeTitle">
-						</div>
-
-						<div class="form-group">
-							<label>Specify start end end time (optional)</label>
-							<div>
-								<input class="form-control col-md-6" style="max-width: 50%;" placeholder="Start 0:00" [(ngModel)]="youtubeStart">
-								<input class="form-control col-md-6" style="max-width: 50%;" placeholder="End 0:00" [(ngModel)]="youtubeEnd">
-							</div>
-						</div>
-
-					</div>
-
-					<br><br>
-					<button class="btn btn-primary" (click)="c('youtube')">Save Track</button>
-				</div>
+				<dnd-track-chooser-youtube
+					[hidden]="activeTab != 'youtube'"
+					[track]="track"
+					(created)="c($event)">
+				</dnd-track-chooser-youtube>
 
 				<div [hidden]="activeTab != 'spotify'">
 					Spotify

@@ -1,0 +1,27 @@
+<div>
+    <div>
+
+        <div class="form-group">
+            <label>Enter any YouTube URL or video ID</label>
+            <input class="form-control" type="text" placeholder="YouTube URL or Video ID" [(ngModel)]="youtubeUrl">
+        </div>
+
+        <div class="form-group">
+            <label>Title</label>
+            <input class="form-control" type="text" placeholder="Enter a title for the track" [(ngModel)]="youtubeTitle">
+        </div>
+
+        <div class="form-group">
+            <label>Specify start end end time (optional)</label>
+            <div>
+                <input class="form-control col-md-6" style="max-width: 50%;" placeholder="Start 0:00" [(ngModel)]="youtubeStart">
+                <input class="form-control col-md-6" style="max-width: 50%;" placeholder="End 0:00" [(ngModel)]="youtubeEnd">
+            </div>
+        </div>
+
+    </div>
+
+    <br><br>
+    <button class="btn btn-primary" (click)="create()">Save Track</button>
+</div>
+

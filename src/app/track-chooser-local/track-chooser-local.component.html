@@ -1,0 +1,17 @@
+<div>
+  <button class="btn btn-secondary pull-xs-right" (click)="chooseMusicDirectory()">
+    <span class="mdi mdi-music-note"></span> Change Music Directory
+  </button>
+
+  <div ng-show="!directoryRoot" class="text-center">
+    <h1><span class="mdi mdi-music-note"></span></h1>
+    <button class="btn btn-secondary btn-lg" (click)="chooseMusicDirectory()">
+      Select Your Music Directory
+    </button>
+  </div>
+  <div ng-show="directoryRoot">
+    <ul>
+      <li ng-repeat="entry in directoryRoot.entries" ng-include="'file-entry.html'"></li>
+    </ul>
+  </div>
+</div>
