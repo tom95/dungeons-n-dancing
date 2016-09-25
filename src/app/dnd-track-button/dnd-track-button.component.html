@@ -1,6 +1,6 @@
 <div class="btn-group pull-xs-right">
-	<button (click)="choose(trackModal)" class="btn btn-xs btn-default">Choose Track</button>
-	<button (click)="remove()" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-remove"></span></button>
+	<button (click)="choose(trackModal)" class="btn btn-sm btn-secondary">Choose Track</button>
+	<button (click)="remove()" class="btn btn-sm btn-secondary"><span class="mdi mdi-close-circle"></span></button>
 </div>
 <span [textContent]="track.title()"></span>
 
@@ -23,11 +23,11 @@
 			<div class="col-md-10">
 				<div [hidden]="activeTab != 'local'">
 					<!--<button class="btn btn-default pull-xs-right" (click)="chooseMusicDirectory()">
-						<span class="glyphicon glyphicon-music"></span> Change Music Directory
+						<span class="mdi mdi-music-note"></span> Change Music Directory
 					</button>
 
 					<div ng-show="!directoryRoot" class="text-center">
-						<h1><span class="glyphicon glyphicon-music"></span></h1>
+						<h1><span class="mdi mdi-music-note"></span></h1>
 						<button class="btn btn-default btn-lg" (click)="chooseMusicDirectory()">
 							Select Your Music Directory
 						</button>

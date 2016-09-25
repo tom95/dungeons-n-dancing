@@ -1,10 +1,6 @@
 import { Component, ElementRef, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { Playlist } from '../playlist';
 
-interface JQueryX extends JQuery {
-  popover(options: Object): JQuery;
-}
-
 @Component({
   selector: 'dnd-playlist-selector',
   templateUrl: './playlist-selector.component.html',
@@ -13,20 +9,17 @@ interface JQueryX extends JQuery {
 export class PlaylistSelectorComponent implements OnInit {
   @Input() playlist: Playlist;
   @Output() selected = new EventEmitter();
+  @Output() deleted = new EventEmitter();
+
   hovered: boolean = false;
 
-  constructor(private element: ElementRef) { }
+  constructor() { }
 
   ngOnInit() {
-    /*let e = $(this.element.nativeElement).find('[data-toggle="popover"]') as JQueryX;
-    e.popover({
-      position: 'right',
-      container: 'body',
-      html: true,
-      content: () => {
-        return ;
-      }
-    });*/
   }
 
+  askDelete() {
+    if (confirm('Delete this playlist?'))
+      return this.deleted.emit();
+  }
 }

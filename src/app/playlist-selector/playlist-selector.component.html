@@ -1,15 +1,19 @@
 <template #playlistSettingsPopover>
-  {{ playlist.title() }}
+  <input class="form-control form-control-sm" [(ngModel)]="playlist.playlistTitle" placeholder="Titel">
+  <input class="form-control form-control-sm" [(ngModel)]="playlist.backgroundUrl" placeholder="Background Image URL">
+  <button class="btn btn-danger btn-sm" (click)="askDelete()">Delete ...</button>
 </template>
 
-<div class="playlist-row clearfix" (mouseenter)="hovered = true" (mouseleave)="hovered = false">
-  <div class="pull-xs-right"><span class="glyphicon glyphicon-play"></span></div>
+<div class="playlist-row clearfix" (mouseenter)="hovered = true" (mouseleave)="hovered = false; popover.close()">
+  <div class="pull-xs-right"><span class="mdi mdi-play-circle"></span></div>
   <div (click)="selected.emit()">
     {{ playlist.title() }}
     <button [hidden]="!hovered"
             [ngbPopover]="playlistSettingsPopover"
-            class="btn btn-default btn-xs">
-      <span class="glyphicon glyphicon-cog"></span>
+            [placement]="'right'"
+            #popover="ngbPopover"
+            class="btn btn-secondary btn-sm">
+      <span class="mdi mdi-settings"></span>
     </button>
   </div>
   <span [style.backgroundImage]="'url(' + playlist.backgroundUrl + ')'" class="bg-image"></span>

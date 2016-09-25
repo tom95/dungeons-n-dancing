@@ -6,10 +6,11 @@
                 <dnd-playlist-selector
                     [playlist]="playlist"
                     (selected)="currentPlaylist = playlist"
-                    *ngFor="let playlist of playlists">
+                    (deleted)="playlists.splice(i, 1)"
+                    *ngFor="let playlist of playlists; let i = index">
                 </dnd-playlist-selector>
             </div>
-            <button (click)="addPlaylist()" class="btn btn-block btn-default">
+            <button (click)="addPlaylist()" class="btn btn-block btn-secondary">
                 Add Playlist
             </button>
         </div>
@@ -30,7 +31,7 @@
                                 *ngFor="let track of currentPlaylist.items; let i = index">
                             </dnd-track-button>
 
-                            <button class="btn btn-default btn-block"
+                            <button class="btn btn-secondary btn-block"
                                 (click)="addTrack()">Add Track</button>
 
                         </div>
@@ -60,9 +61,9 @@
             </table>
 
             <div class="play-controls" uib-popover-template="'/templates/queue.html'" popover-trigger="outsideClick">
-                <span class="glyphicon glyphicon-backward"></span>
-                <span class="glyphicon" [class.glyphicon-pause]="playing" [class.glyphicon-play]="!playing" (click)="currentPlaylist.play(1000)"></span>
-                <span class="glyphicon glyphicon-forward" (click)="currentPlaylist.skipForward()"></span>
+                <span class="mdi mdi-skip-previous-circle"></span>
+                <span class="mdi" [class.mdi-pause-circle]="playing" [class.mdi-play-circle]="!playing" (click)="currentPlaylist.play(1000)"></span>
+                <span class="mdi mdi-skip-next-circle" (click)="currentPlaylist.skipForward()"></span>
             </div>
         </div>
 
