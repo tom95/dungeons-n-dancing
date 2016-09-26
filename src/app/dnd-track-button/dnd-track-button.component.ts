@@ -32,15 +32,9 @@ export class DndTrackButtonComponent implements OnInit {
   ngOnInit() {
   }
 
-  remove() {
-    this.trackDeleted.emit(this.track);
-  }
-
-  choose(trackModal) {
-    this.modalService.open(trackModal, { size: 'lg' }).result.then(result => {
-      this.trackSelected.emit(result);
-    }, reason => {
-    });
+  openChooseModal(trackModal) {
+    this.modalService.open(trackModal, { size: 'lg' }).result
+      .then(result => this.trackSelected.emit(result));
 
     switch (this.track.constructor.name) {
       case 'YoutubeTrack':
