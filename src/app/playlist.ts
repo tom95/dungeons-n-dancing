@@ -2,11 +2,13 @@ import { Track } from './track';
 import { YoutubeTrack } from './youtube-track';
 import { EmptyTrack } from './empty-track';
 import { LocalTrack } from './local-track';
+import { Playback, NormalPlayback, RandomPlayback } from './playback';
 
 export class Playlist {
 	items: Array<Track> = [];
 	playlistTitle: string;
 	currentTrack: Track;
+	playback: Playback;
 	backgroundUrl: string = 'http://www.discovertheforest.org/images/hero/home/6.jpg';
 
 	constructor(title) {
@@ -43,26 +45,19 @@ export class Playlist {
 	}
 
 	findStartTrack(): Track {
-		return this.items[0];
+		return this.playback.findStartTrack(this.items);
 	}
 
 	nextTrack(previous: Track): Track {
-		let index = this.items.indexOf(previous);
-		let nextIndex = index + 1 >= this.items.length ? 0 : index + 1;
-		console.log(index, nextIndex, this.items.length);
-		return this.items[nextIndex];
+		return this.playback.nextTrack(this.items, previous);
 	}
 
 	serialize(): Promise<any> {
-		return Promise.all(this.items.map((track) => {
-			return track.serialize();
-		})).then((tracks) => {
-			return {
-				title: this.playlistTitle,
-				backgroundUrl: this.backgroundUrl,
-				tracks: tracks,
-				type: 'playlist'
-			};
-		});
+		return Promise.all(this.items.map(track => track.serialize())).then(tracks => ({
+			title: this.playlistTitle,
+			backgroundUrl: this.backgroundUrl,
+			tracks: tracks,
+			type: 'playlist'
+		})).then(playlist => this.playback.serialize(playlist));
 	}
 }
