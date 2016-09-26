@@ -9,7 +9,7 @@ import { PlaylistSelectorComponent } from './playlist-selector/playlist-selector
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TrackChooserYoutubeComponent } from './track-chooser-youtube/track-chooser-youtube.component';
 import { TrackChooserLocalComponent } from './track-chooser-local/track-chooser-local.component';
-import { TrackChooserDropboxComponent } from './track-chooser-dropbox/track-chooser-dropbox.component';
+import { TrackChooserDropboxComponent, DropboxFile, DropboxService } from './track-chooser-dropbox/track-chooser-dropbox.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,8 @@ import { TrackChooserDropboxComponent } from './track-chooser-dropbox/track-choo
     PlaylistSelectorComponent,
     TrackChooserYoutubeComponent,
     TrackChooserLocalComponent,
-    TrackChooserDropboxComponent
+    TrackChooserDropboxComponent,
+    DropboxFile
   ],
   imports: [
     BrowserModule,
@@ -26,7 +27,9 @@ import { TrackChooserDropboxComponent } from './track-chooser-dropbox/track-choo
     HttpModule,
     NgbModule
   ],
-  providers: [],
+  providers: [
+    DropboxService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

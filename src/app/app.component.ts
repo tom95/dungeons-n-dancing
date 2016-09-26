@@ -1,10 +1,12 @@
 import { ElementRef, HostListener, Component } from '@angular/core';
+import { Playlist } from './playlist';
+import { RandomPlayback, NormalPlayback } from './playback';
+
 import { Track } from './track';
 import { EmptyTrack } from './empty-track';
 import { LocalTrack } from './local-track';
 import { YoutubeTrack } from './youtube-track';
-import { Playlist } from './playlist';
-import { RandomPlayback, NormalPlayback } from './playback';
+import { DropboxTrack } from './dropbox-track';
 
 @Component({
   selector: 'app-root',
@@ -85,6 +87,8 @@ export class AppComponent {
 	  return YoutubeTrack.deserialize(track);
 	case 'track-local':
 	  return LocalTrack.deserialize(track);
+	case 'track-dropbox':
+	  return DropboxTrack.deserialize(track);
 	default:
 	  return EmptyTrack.deserialize(track);
       }

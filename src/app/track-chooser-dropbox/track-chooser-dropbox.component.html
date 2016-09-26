@@ -1,8 +1,13 @@
 
-<button *ngIf="!accessToken" class="btn btn-secondary btn-block" (click)="authorize()">
+<button *ngIf="!dropbox.authenticated()" class="btn btn-secondary btn-block" (click)="authorize()">
   Authenticate Dropbox
 </button>
 
-<div *ngIf="accessToken">
-  Authenticated!
+<div *ngIf="dropbox.authenticated()">
+  <ul>
+    <li *ngFor="let file of files">
+      <dropbox-file [file]="file" (selected)="fileSelected($event)">
+      </dropbox-file>
+    </li>
+  </ul>
 </div>
