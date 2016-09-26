@@ -1,62 +1,43 @@
-
-interface IListenerMap {
-	[key: string]: Array<Function>;
-}
+import { EventEmitter } from '@angular/core';
 
 export class Track {
-	prepared: boolean = false;
-	playing: boolean = false;
-	eventListeners: IListenerMap = {};
-	aboutToFinish: number;
-	startFade: number;
+	isPrepared: boolean = false;
+	isPlaying: boolean = false;
 
-	constructor() {
-	}
+	preloadStartingTime: number;
+	fadeOutDuration: number;
 
-	fadeIn(duration: number) {
-	}
+	currentProgress: number;
+	totalDuration: number;
 
-	fadeOut(duration: number) {
-	}
+	prepared = new EventEmitter();
+	started = new EventEmitter();
+	progress = new EventEmitter<[number,number]>();
+	toggleBuffering = new EventEmitter<boolean>();
+	ending = new EventEmitter();
+	startingFadeOut = new EventEmitter();
+	ended = new EventEmitter();
 
-	serialize() {
-	}
+	fadeIn(duration: number) {}
 
-	title() {
-	}
+	fadeOut(duration: number) {}
 
-	on(event: string, cb: Function) {
-		if (!this.eventListeners[event])
-			this.eventListeners[event] = [];
-		this.eventListeners[event].push(cb);
-	}
+	serialize() {}
 
-	emit(event: string) {
-		if (!this.eventListeners[event])
-			return;
-		var args = Array.prototype.slice.call(arguments);
-		this.eventListeners[event].forEach(cb => cb(args.slice(1)));
-	}
+	title() {}
 
-	setEventTiming(aboutToFinish: number, startFade: number) {
-		this.aboutToFinish = aboutToFinish;
-		this.startFade = startFade;
-	}
+	setPlaying(playing: boolean) {}
 
-	setPlaying(playing: boolean) {
-	}
+	prepare(): Promise<void> { return Promise.resolve(); }
 
-	static deserialize(data: any): Promise<Track> {
-	   return Promise.resolve(null);
-	}
-
-	prepare(): Promise<void> {
-		return Promise.resolve();
+	setEventTiming(preloadStartingTime: number, fadeOutDuration: number) {
+		this.preloadStartingTime = preloadStartingTime;
+		this.fadeOutDuration = fadeOutDuration;
 	}
 
 	play(fadeInDuration: number) {
-		this.prepare().then(() => {
-			this.fadeIn(fadeInDuration);
-		});
+		this.prepare().then(() => this.fadeIn(fadeInDuration));
 	}
+
+	static deserialize(data: any): Promise<Track> { return Promise.resolve(null); }
 }

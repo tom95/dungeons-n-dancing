@@ -20,6 +20,7 @@
 					<a href="#" (click)="activeTab = 'local'" [class.active]="activeTab == 'local'" class="list-group-item">Local</a>
 					<a href="#" (click)="activeTab = 'youtube'" [class.active]="activeTab == 'youtube'" class="list-group-item">YouTube</a>
 					<a href="#" (click)="activeTab = 'spotify'" [class.active]="activeTab == 'spotify'" class="list-group-item">Spotify</a>
+					<a href="#" (click)="activeTab = 'dropbox'" [class.active]="activeTab == 'dropbox'" class="list-group-item">Dropbox</a>
 				</div>
 			</div>
 
@@ -38,6 +39,12 @@
 				<div [hidden]="activeTab != 'spotify'">
 					Spotify
 				</div>
+
+				<dnd-track-chooser-dropbox
+					[hidden]="activeTab != 'dropbox'"
+					[track]="track"
+					(created)="c($event)">
+				</dnd-track-chooser-dropbox>
 
 			</div>
 		</div>

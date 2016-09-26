@@ -16,9 +16,6 @@ export class YoutubeTrack extends Track {
 		this.start = start === undefined ? -1 : this.translateSeconds(start);
 		this.end = end === undefined ? -1 : this.translateSeconds(end);
 		this.ytTitle = title;
-		this.playing = false;
-
-		this.prepared = false;
 
 		this.frame = document.createElement('iframe');
 		this.frame.src = '/assets/youtube.html';
@@ -33,26 +30,30 @@ export class YoutubeTrack extends Track {
 		this.frame.contentWindow.addEventListener('load', () => { this.frameLoaded = true; });
 
 		window.addEventListener('message', e => {
-			if (e.data.playFinished)
-				return this.emit('ended');
-
-			if (e.data.prepareFinished && this.preparePromise) {
-				this.prepared = true;
+			if (e.data.eventPrepared && this.preparePromise) {
+				this.isPrepared = true;
 				this.preparePromise(this);
 				this.preparePromise = null;
 				return;
 			}
-
-			if (e.data.ending)
-				return this.emit('ending');
-
-			if (e.data.startFade)
-				return this.emit('startFade');
+			if (e.data.eventProgress) {
+				this.currentProgress = e.data.current;
+				this.totalDuration = e.data.total;
+				return this.progress.emit([e.data.current, e.data.total]);
+			}
+			if (e.data.eventEnded)
+				return this.ended.emit();
+			if (e.data.eventEnding)
+				return this.ending.emit();
+			if (e.data.eventStartingFadeOut)
+				return this.startingFadeOut.emit();
+			if (e.data.eventToggleBuffering)
+				return this.toggleBuffering.emit(e.data.buffering);
 		});
 	}
 
 	setPlaying(playing: boolean) {
-		this.playing = playing;
+		this.isPlaying = playing;
 		this.frame.contentWindow.postMessage({
 			command: 'setPlaying',
 			playing: playing
@@ -68,7 +69,7 @@ export class YoutubeTrack extends Track {
 	}
 
 	prepare() {
-		if (this.prepared)
+		if (this.isPrepared)
 			return Promise.resolve(this);
 
 		return new Promise((resolve, reject) => {
@@ -80,15 +81,15 @@ export class YoutubeTrack extends Track {
 					url: this.url,
 					start: this.start,
 					end: this.end,
-					aboutToFinish: this.aboutToFinish / 1000,
-					startFade: this.startFade / 1000
+					preloadStartingTime: this.preloadStartingTime / 1000,
+					fadeOutDuration: this.fadeOutDuration / 1000
 				}, '*');
 			};
 
 			if (this.frameLoaded)
 				startPrepare();
 			else
-				this.frame.contentWindow.addEventListener('load', () => { startPrepare(); });
+				this.frame.contentWindow.addEventListener('load', () => startPrepare());
 		});
 	}
 
@@ -97,7 +98,7 @@ export class YoutubeTrack extends Track {
 	}
 
 	fadeIn(duration) {
-		this.playing = true;
+		this.isPlaying = true;
 		this.frame.contentWindow.postMessage({
 			command: 'play',
 			fadeInDuration: duration

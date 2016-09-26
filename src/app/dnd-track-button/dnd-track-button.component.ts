@@ -34,7 +34,7 @@ export class DndTrackButtonComponent implements OnInit {
 
   openChooseModal(trackModal) {
     this.modalService.open(trackModal, { size: 'lg' }).result
-      .then(result => this.trackSelected.emit(result));
+      .then(result => this.trackSelected.emit(result), () => 0);
 
     switch (this.track.constructor.name) {
       case 'YoutubeTrack':

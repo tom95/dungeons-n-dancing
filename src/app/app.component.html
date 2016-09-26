@@ -66,11 +66,15 @@
                 </tr>
             </table>
 
-            <div class="play-controls" uib-popover-template="'/templates/queue.html'" popover-trigger="outsideClick">
+            <div class="play-controls">
                 <span class="mdi mdi-skip-previous-circle"></span>
-                <span class="mdi" [class.mdi-pause-circle]="playing" [class.mdi-play-circle]="!playing" (click)="currentPlaylist.play(1000)"></span>
+                <span class="mdi"
+                    [class.mdi-pause-circle]="currentPlaylist.playing"
+                    [class.mdi-play-circle]="!currentPlaylist.playing"
+                    (click)="currentPlaylist.togglePlaying()"></span>
                 <span class="mdi mdi-skip-next-circle" (click)="currentPlaylist.skipForward()"></span>
             </div>
+            <div class="track-progress" [style.width]="currentPlaylist.getCurrentTrackProgressPercent() * 100 + '%'"></div>
         </div>
 
     </div>

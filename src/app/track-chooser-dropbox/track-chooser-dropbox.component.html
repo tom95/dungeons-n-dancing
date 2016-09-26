@@ -1,0 +1,8 @@
+
+<button *ngIf="!accessToken" class="btn btn-secondary btn-block" (click)="authorize()">
+  Authenticate Dropbox
+</button>
+
+<div *ngIf="accessToken">
+  Authenticated!
+</div>

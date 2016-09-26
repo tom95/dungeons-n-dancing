@@ -87,21 +87,24 @@ dnd-track-button:after {
 }
 
 .play-controls {
-	height: 80px;
+	height: 48px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 22px;
+	font-size: 28px;
 	margin-right: 24px;
 }
 .play-controls span {
 	margin: 6px;
 }
-.play-controls span.glyphicon-play, .play-controls span.glyphicon-pause {
-	font-size: 32px;
+.play-controls span.mdi-play-circle, .play-controls span.mdi-pause-circle {
+	font-size: 40px;
 }
-.popover {
-	width: 800px;
+.track-progress {
+	width: 0;
+	height: 4px;
+	background-color: #8e2b23;
+	border-radius: 99px;
 }
 
 .music-file ul {

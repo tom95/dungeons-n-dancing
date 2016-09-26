@@ -14,8 +14,8 @@ window.addEventListener('message', function(e) {
 			prepare(e.data.url,
 					e.data.start,
 					e.data.end,
-					e.data.aboutToFinish,
-					e.data.startFade);
+					e.data.preloadStartingTime,
+					e.data.fadeOutDuration);
 			break;
 		case 'play':
 			play(e.data.fadeInDuration);
@@ -29,17 +29,26 @@ window.addEventListener('message', function(e) {
 	}
 });
 
-function notifyPlayFinished() {
-	reply({ playFinished: true });
+function notifyPrepared() {
+	reply({ eventPrepared: true });
 }
-function notifyPrepareFinished() {
-	reply({ prepareFinished: true });
+function notifyStarted() {
+	reply({ eventStarted: true });
 }
-function notifyStartFade() {
-	reply({ startFade: true });
+function notifyProgress(current, total) {
+	reply({ eventEnding: true, current: current, total: total });
+}
+function notifyToggleBuffering(isBuffering) {
+	reply({ eventToggleBuffering: true, buffering: isBuffering });
 }
 function notifyEnding() {
-	reply({ ending: true });
+	reply({ eventEnding: true });
+}
+function notifyStartingFadeOut() {
+	reply({ eventStartingFadeOut: true });
+}
+function notifyEnded() {
+	reply({ eventEnded: true });
 }
 
 var player;
@@ -51,7 +60,7 @@ function setPlaying(playing) {
 		player.pauseVideo();
 }
 
-function prepare(url, start, end, timeAboutToFinish, timeStartFade) {
+function prepare(url, start, end, preloadStartingTime, fadeOutDuration) {
 	if (url.substring(0, 4) == 'http')
 		url = url.match(/watch\?v=([^&]+)/)[1];
 
@@ -76,29 +85,53 @@ function prepare(url, start, end, timeAboutToFinish, timeStartFade) {
 		event.target.playVideo();
 	}
 
+	var startTime = start < 0 ? 0 : start;
+	var totalDuration;
+
 	var checkNearEndingInterval;
 	var ready = false;
+	var buffering = false;
 	var aboutToFinishSent = false;
 	var timeStartFadeSent = false;
 	function onPlayerStateChange(event) {
 		if (event.data == YT.PlayerState.PLAYING && !ready) {
+			if (buffering) {
+				notifyToggleBuffering(false);
+				buffering = false;
+			}
+
 			event.target.pauseVideo();
 			ready = true;
-			notifyPrepareFinished();
+			start = Math.max(0, start);
+			totalDuration = (end < 0 ? player.getDuration() : end) - start;
+			notifyPrepared();
+			notifyProgress(0, totalDuration);
+
 			checkNearEndingInterval = setInterval(function() {
-				if (!aboutToFinishSent && end - player.getCurrentTime() < timeAboutToFinish) {
+				var current = player.getCurrentTime() - start;
+				if (!aboutToFinishSent && totalDuration - current < preloadStartingTime) {
 					aboutToFinishSent = true;
 					notifyEnding();
 				}
-				if (!timeStartFadeSent && end - player.getCurrentTime() < timeStartFade) {
+
+				console.log(timeStartFadeSent, totalDuration - current, current, totalDuration);
+				if (!timeStartFadeSent && totalDuration - current < fadeOutDuration) {
+					console.log('EMIT FADEOUT');
 					timeStartFadeSent = true;
-					fadeOut(timeStartFade);
-					notifyStartFade();
+					fadeOut(fadeOutDuration);
+					notifyStartingFadeOut();
 				}
+				notifyProgress(current, totalDuration);
 			}, 1000);
-		} if (event.data == YT.PlayerState.ENDED) {
+		} else if (event.data == YT.PlayerState.PLAYING && buffering) {
+			buffering = false;
+			notifyToggleBuffering(false);
+		} else if (event.data == YT.PlayerState.ENDED) {
 			clearInterval(checkNearEndingInterval);
-			notifyPlayFinished();
+			notifyEnded();
+		} else if (event.data == YT.PlayerState.BUFFERING) {
+			notifyToggleBuffering(true);
+			buffering = true;
 		}
 	}
 }
@@ -126,6 +159,7 @@ function fadeOut(duration) {
 
 function play(fadeInDuration) {
 	player.playVideo();
+	notifyStarted();
 
 	var volume = 0;
 	var step = 100.0 / fadeInDuration * INCREMENT_SPEED;

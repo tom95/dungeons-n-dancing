@@ -9,6 +9,7 @@ import { PlaylistSelectorComponent } from './playlist-selector/playlist-selector
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TrackChooserYoutubeComponent } from './track-chooser-youtube/track-chooser-youtube.component';
 import { TrackChooserLocalComponent } from './track-chooser-local/track-chooser-local.component';
+import { TrackChooserDropboxComponent } from './track-chooser-dropbox/track-chooser-dropbox.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { TrackChooserLocalComponent } from './track-chooser-local/track-chooser-
     DndTrackButtonComponent,
     PlaylistSelectorComponent,
     TrackChooserYoutubeComponent,
-    TrackChooserLocalComponent
+    TrackChooserLocalComponent,
+    TrackChooserDropboxComponent
   ],
   imports: [
     BrowserModule,
