@@ -112,6 +112,10 @@ export class YoutubeTrack extends Track {
 		}, '*');
 	}
 
+	icon(): string {
+		return 'mdi-youtube-play';
+	}
+
 	serialize() {
 		return Promise.resolve({
 			start: this.start,

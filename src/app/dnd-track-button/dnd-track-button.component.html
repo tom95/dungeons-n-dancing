@@ -1,8 +1,11 @@
-<div class="btn-group pull-xs-right">
-	<button (click)="openChooseModal(trackModal)" class="btn btn-sm btn-secondary">Choose Track</button>
-	<button (click)="trackDeleted.emit(track)" class="btn btn-sm btn-secondary">
-		<span class="mdi mdi-close-circle"></span>
-	</button>
+<div class="pull-xs-right">
+	<span class="mdi" [ngClass]="track.icon()"></span>
+	<div class="btn-group">
+		<button (click)="openChooseModal(trackModal)" class="btn btn-sm btn-secondary">Choose Track</button>
+		<button (click)="trackDeleted.emit(track)" class="btn btn-sm btn-secondary">
+			<span class="mdi mdi-close-circle"></span>
+		</button>
+	</div>
 </div>
 
 <span [textContent]="track.title()"></span>

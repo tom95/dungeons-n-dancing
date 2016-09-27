@@ -22,9 +22,11 @@ export class Track {
 
 	fadeOut(duration: number) {}
 
-	serialize() {}
+	serialize(): any { return {}; }
 
-	title() {}
+	title(): string { return ''; }
+
+	icon(): string { return ''; }
 
 	setPlaying(playing: boolean) {}
 

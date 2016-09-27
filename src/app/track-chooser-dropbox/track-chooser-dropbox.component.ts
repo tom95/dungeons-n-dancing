@@ -69,7 +69,7 @@ export class DropboxService {
           url: file.url,
           dropboxId: file.id,
           isFolder: file['.tag'] == 'folder',
-          isAudioFile: false /*TODO*/,
+          isAudioFile: !!file.path_lower.match(/\.(mp3|ogg)$/i),
           children: null
         })));
         if (data.has_more)
@@ -85,8 +85,14 @@ export class DropboxService {
 
 @Component({
   selector: 'dropbox-file',
-  template: ` <a href="#" (click)="select()" [textContent]="file.title"></a>
-  <ul *ngIf="file.isFolder && file.children" [style.height]="expanded ? 'auto' : 0">
+  template: ` <a href="#" (click)="select()" [style.opacity]="file.isFolder || file.isAudioFile ? 1.0 : 0.6">
+    <span class="mdi"
+      [class.mdi-folder]="file.isFolder"
+      [class.mdi-file]="!file.isFolder && !file.isAudioFile"
+      [class.mdi-file-music]="file.isAudioFile"></span>
+    <span [textContent]="file.title"></span>
+  </a>
+  <ul *ngIf="file.isFolder && file.children" [style.height]="expanded ? 'auto' : 0" style="overflow:hidden">
     <li *ngFor="let cfile of file.children">
       <dropbox-file [file]="cfile" (selected)="selected.emit($event)"></dropbox-file>
     </li>
