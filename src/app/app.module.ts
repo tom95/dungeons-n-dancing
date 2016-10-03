@@ -10,6 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TrackChooserYoutubeComponent } from './track-chooser-youtube/track-chooser-youtube.component';
 import { TrackChooserLocalComponent } from './track-chooser-local/track-chooser-local.component';
 import { TrackChooserDropboxComponent, DropboxFile, DropboxService } from './track-chooser-dropbox/track-chooser-dropbox.component';
+import { PlaybackManager } from './playback-manager';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { TrackChooserDropboxComponent, DropboxFile, DropboxService } from './tra
     NgbModule
   ],
   providers: [
-    DropboxService
+    DropboxService,
+    PlaybackManager
   ],
   bootstrap: [AppComponent]
 })

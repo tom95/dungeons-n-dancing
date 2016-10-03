@@ -60,21 +60,22 @@
         <div class="col-md-3" *ngIf="currentPlaylist">
             <table class="table table-striped">
                 <tr><th colspan="2">Queue</th></tr>
-                <tr [class.success]="currentPlaylist.currentTrack == track" *ngFor="let track of currentPlaylist.items; let i = index">
+                <tr [class.success]="playback.currentTrack == track" *ngFor="let track of playback.items; let i = index">
                     <td [textContent]="i + 1"></td>
                     <td [textContent]="track.title()"></td>
                 </tr>
             </table>
 
             <div class="play-controls">
-                <span class="mdi mdi-skip-previous-circle"></span>
-                <span class="mdi"
-                    [class.mdi-pause-circle]="currentPlaylist.playing"
-                    [class.mdi-play-circle]="!currentPlaylist.playing"
-                    (click)="currentPlaylist.togglePlaying()"></span>
-                <span class="mdi mdi-skip-next-circle" (click)="currentPlaylist.skipForward()"></span>
+                <span class="mdi icon-large"
+                    [class.mdi-pause-circle]="playback.currentTrackPlaying()"
+                    [class.mdi-play-circle]="!playback.currentTrackPlaying()"
+                    *ngIf="!playback.loading"
+                    (click)="playback.togglePlaying()"></span>
+                <span class="mdi icon-large mdi-reload" *ngIf="playback.loading"></span>
+                <span *ngIf="!playback.loading"class="mdi mdi-skip-next-circle" (click)="playback.skipForward()"></span>
             </div>
-            <div class="track-progress" [style.width]="currentPlaylist.getCurrentTrackProgressPercent() * 100 + '%'"></div>
+            <div class="track-progress" [style.width]="playback.currentTrackProgressPercent() * 100 + '%'"></div>
         </div>
 
     </div>

@@ -9,85 +9,44 @@ export class DropboxTrack extends Track {
 		this._title = this._title.match(/^([^.]+)/)[1] || this._title;
 	}
 
-	setPlaying(playing: boolean) {
-		if (playing)
-			this.audio.play();
-		else
-			this.audio.pause();
-	}
-
-	endingSent: boolean = false;
-	startingFadeOutSent: boolean = false;
-
 	prepare() {
-		this.audio = new Audio(this.url);
-		this.audio.preload = 'auto';
-		this.audio.addEventListener('canplaythrough', () => this.prepared.emit());
-		this.audio.addEventListener('ended', () => this.ended.emit());
-		this.audio.addEventListener('timeupdate', () => {
-			this.progress.emit([this.audio.currentTime, this.audio.duration])
-			this.currentProgress = this.audio.currentTime || 0;
-			this.totalDuration = this.audio.duration || 0;
+		return new Promise(resolve => {
+			this.audio = new Audio(this.url);
+			this.audio.preload = 'auto';
+			this.audio.addEventListener('canplaythrough', () => resolve());
+			this.audio.addEventListener('ended', () => this.progress.emit([this.audio.duration, this.audio.duration]));
+			this.audio.addEventListener('timeupdate', () => {
+				this.progress.emit([this.audio.currentTime, this.audio.duration])
+				this.currentProgress = this.audio.currentTime || 0;
+				this.totalDuration = this.audio.duration || 0;
 
-			if (this.totalDuration < 1)
-				return;
-
-			let timeTillEnd = this.totalDuration - this.currentProgress;
-			if (timeTillEnd <= this.preloadStartingTime / 1000 && !this.endingSent) {
-				this.endingSent = true;
-				this.ending.emit();
-			}
-			if (timeTillEnd <= this.fadeOutDuration / 1000 && !this.startingFadeOutSent) {
-				this.startingFadeOutSent = true;
-				this.startingFadeOut.emit();
-			}
-		});
-		return Promise.resolve();
+				if (this.totalDuration < 1)
+					return;
+			});
+		})
 	}
 
 	title() {
 		return this._title;
 	}
 
+	free() {
+		this.audio.src = null;
+	}
+
 	icon() {
 		return 'mdi-dropbox';
 	}
 
-	fadeIn(duration) {
-		const INCREMENT_SPEED = 10;
-
-		this.isPlaying = true;
-		this.started.emit();
-
-		let step = 1.0 / duration * INCREMENT_SPEED;
-
-		let incr = () => {
-			this.audio.volume = Math.min(this.audio.volume + step, 1);
-			if (this.audio.volume < 1)
-				setTimeout(incr, INCREMENT_SPEED);
-			else
-				this.audio.volume = 1;
-		}
-
-		this.audio.volume = 0;
-		this.audio.play();
-		incr();
+	setVolume(volume: number) {
+		this.audio.volume = volume;
 	}
 
-	fadeOut(duration) {
-		const INCREMENT_SPEED = 10;
-		let step = 1.0 / duration * INCREMENT_SPEED;
-
-		let decr = () => {
-			this.audio.volume = Math.max(this.audio.volume - step, 0);
-			if (this.audio.volume > 0)
-				setTimeout(decr, INCREMENT_SPEED);
-			else
-				this.audio.pause();
-		}
-
-		this.isPlaying = false;
-		decr();
+	setPlaying(playing: boolean) {
+		if (playing)
+			this.audio.play();
+		else
+			this.audio.pause();
 	}
 
 	serialize() {

@@ -97,7 +97,7 @@ dnd-track-button:after {
 .play-controls span {
 	margin: 6px;
 }
-.play-controls span.mdi-play-circle, .play-controls span.mdi-pause-circle {
+.play-controls span.icon-large {
 	font-size: 40px;
 }
 .track-progress {

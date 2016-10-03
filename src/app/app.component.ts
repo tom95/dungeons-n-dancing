@@ -2,6 +2,7 @@ import { ElementRef, HostListener, Component } from '@angular/core';
 import { Playlist } from './playlist';
 import { RandomPlayback, NormalPlayback } from './playback';
 
+import { PlaybackManager } from './playback-manager';
 import { Track } from './track';
 import { EmptyTrack } from './empty-track';
 import { LocalTrack } from './local-track';
@@ -17,7 +18,7 @@ export class AppComponent {
   playlists: Array<Playlist> = [];
   currentPlaylist: Playlist = null;
 
-  constructor() {
+  constructor(private playback: PlaybackManager) {
   }
 
   ngOnInit() {
@@ -34,7 +35,7 @@ export class AppComponent {
     if (!name)
       return;
 
-    let playlist = new Playlist(name);
+    let playlist = new Playlist(name, this.playback);
     this.playlists.push(playlist);
     this.currentPlaylist = playlist;
   }
@@ -95,7 +96,7 @@ export class AppComponent {
     });
 
     return Promise.all(p).then(tracks => {
-      let playlist = new Playlist(data.title);
+      let playlist = new Playlist(data.title, this.playback);
       switch (data.playback) {
 	case 'random':
 	  playlist.playback = new RandomPlayback();

@@ -5,7 +5,10 @@
 </template>
 
 <div class="playlist-row clearfix" (mouseenter)="hovered = true" (mouseleave)="hovered = false; popover.close()">
-  <div class="pull-xs-right"><span class="mdi mdi-play-circle"></span></div>
+  <div class="pull-xs-right" (click)="playlist.play()">
+    <span class="mdi mdi-play-circle"></span>
+  </div>
+
   <div (click)="selected.emit()">
     {{ playlist.title() }}
     <button [hidden]="!hovered"
@@ -16,5 +19,6 @@
       <span class="mdi mdi-settings"></span>
     </button>
   </div>
+
   <span [style.backgroundImage]="playlist.backgroundImageStyle()" class="bg-image"></span>
 </div>

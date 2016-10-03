@@ -13,42 +13,24 @@ window.addEventListener('message', function(e) {
 			};
 			prepare(e.data.url,
 					e.data.start,
-					e.data.end,
-					e.data.preloadStartingTime,
-					e.data.fadeOutDuration);
-			break;
-		case 'play':
-			play(e.data.fadeInDuration);
+					e.data.end);
 			break;
 		case 'setPlaying':
 			setPlaying(e.data.playing);
 			break;
-		case 'fadeOut':
-			fadeOut(e.data.duration);
-			break;
+		case 'setVolume':
+			setVolume(e.data.volume);
 	}
 });
 
 function notifyPrepared() {
 	reply({ eventPrepared: true });
 }
-function notifyStarted() {
-	reply({ eventStarted: true });
-}
 function notifyProgress(current, total) {
-	reply({ eventEnding: true, current: current, total: total });
+	reply({ eventProgress: true, current: current, total: total });
 }
 function notifyToggleBuffering(isBuffering) {
 	reply({ eventToggleBuffering: true, buffering: isBuffering });
-}
-function notifyEnding() {
-	reply({ eventEnding: true });
-}
-function notifyStartingFadeOut() {
-	reply({ eventStartingFadeOut: true });
-}
-function notifyEnded() {
-	reply({ eventEnded: true });
 }
 
 var player;
@@ -81,18 +63,16 @@ function prepare(url, start, end, preloadStartingTime, fadeOutDuration) {
 	player = new YT.Player('player', args);
 
 	function onPlayerReady(event) {
-		event.target.setVolume(0);
+		event.target.setVolume(100);
 		event.target.playVideo();
 	}
 
 	var startTime = start < 0 ? 0 : start;
 	var totalDuration;
 
-	var checkNearEndingInterval;
+	var progressInterval;
 	var ready = false;
 	var buffering = false;
-	var aboutToFinishSent = false;
-	var timeStartFadeSent = false;
 	function onPlayerStateChange(event) {
 		if (event.data == YT.PlayerState.PLAYING && !ready) {
 			if (buffering) {
@@ -107,28 +87,16 @@ function prepare(url, start, end, preloadStartingTime, fadeOutDuration) {
 			notifyPrepared();
 			notifyProgress(0, totalDuration);
 
-			checkNearEndingInterval = setInterval(function() {
+			progressInterval = setInterval(function() {
 				var current = player.getCurrentTime() - start;
-				if (!aboutToFinishSent && totalDuration - current < preloadStartingTime) {
-					aboutToFinishSent = true;
-					notifyEnding();
-				}
-
-				console.log(timeStartFadeSent, totalDuration - current, current, totalDuration);
-				if (!timeStartFadeSent && totalDuration - current < fadeOutDuration) {
-					console.log('EMIT FADEOUT');
-					timeStartFadeSent = true;
-					fadeOut(fadeOutDuration);
-					notifyStartingFadeOut();
-				}
 				notifyProgress(current, totalDuration);
-			}, 1000);
+			}, 300);
 		} else if (event.data == YT.PlayerState.PLAYING && buffering) {
 			buffering = false;
 			notifyToggleBuffering(false);
 		} else if (event.data == YT.PlayerState.ENDED) {
-			clearInterval(checkNearEndingInterval);
-			notifyEnded();
+			clearInterval(progressInterval);
+			notifyProgress(totalDuration, totalDuration);
 		} else if (event.data == YT.PlayerState.BUFFERING) {
 			notifyToggleBuffering(true);
 			buffering = true;
@@ -136,44 +104,7 @@ function prepare(url, start, end, preloadStartingTime, fadeOutDuration) {
 	}
 }
 
-const INCREMENT_SPEED = 10;
-
-function fadeOut(duration) {
-	var volume = 100;
-	var step = 100.0 / duration * INCREMENT_SPEED;
-
-	function decr() {
-		volume -= step;
-		if (volume > 0) {
-			player.setVolume(volume);
-			setTimeout(() => {
-				decr();
-			}, INCREMENT_SPEED);
-		} else {
-			player.setVolume(0);
-			player.stopVideo();
-		}
-	}
-	decr();
-}
-
-function play(fadeInDuration) {
-	player.playVideo();
-	notifyStarted();
-
-	var volume = 0;
-	var step = 100.0 / fadeInDuration * INCREMENT_SPEED;
-
-	function incr() {
-		volume += step;
-		if (volume < 100) {
-			player.setVolume(volume);
-			setTimeout(() => {
-				incr();
-			}, INCREMENT_SPEED);
-		} else
-			player.setVolume(100);
-	}
-	incr();
+function setVolume(vol) {
+	player.setVolume(vol * 100);
 }
 
