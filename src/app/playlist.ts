@@ -15,6 +15,7 @@ export class Playlist {
 
 	constructor(title) {
 		this.playlistTitle = title;
+		this.playback = new NormalPlayback();
 		this.id = genId('playlist');
 	}
 

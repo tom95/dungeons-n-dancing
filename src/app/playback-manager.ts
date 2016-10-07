@@ -104,7 +104,7 @@ export class PlaybackManager extends IPlaybackManager {
 		if (savePlaybackManagerInstanceCount > 1)
 			throw new Error('Too many playback managers instantiated D:');
 
-		this.socket.connect('ws://localhost:4200').forEach(e => {
+		/*this.socket.connect('ws://localhost:4200').forEach(e => {
 			const COMMANDS = {
 				play: this.play,
 				pause: this.pause,
@@ -127,7 +127,7 @@ export class PlaybackManager extends IPlaybackManager {
 					arg = this.storage.findPlaylistById(arg);
 			}
 			f(arg)
-		});
+		});*/
 	}
 
 	currentTrackProgressPercent() {

@@ -7,6 +7,7 @@ import { EmptyTrack } from './empty-track';
 import { LocalTrack } from './local-track';
 import { YoutubeTrack } from './youtube-track';
 import { DropboxTrack } from './dropbox-track';
+import { DeezerTrack } from './deezer-track';
 
 @Injectable()
 export class PlaylistStorage {
@@ -14,14 +15,15 @@ export class PlaylistStorage {
 
   load() {
     let data = localStorage.getItem('playlists');
+    this.playlists = [];
     if (!data)
-      return Promise.resolve(false);
+      return Promise.resolve([]);
 
     let p: Promise<Playlist>[] = JSON.parse(data).map(playlist => this.deserializePlaylist(playlist));
 
     return Promise.all(p).then(playlists => {
       this.playlists = playlists;
-      return true;
+      return playlists;
     });
   }
 
@@ -60,6 +62,8 @@ export class PlaylistStorage {
           return LocalTrack.deserialize(track);
         case 'track-dropbox':
           return DropboxTrack.deserialize(track);
+        case 'track-deezer':
+          return DeezerTrack.deserialize(track);
         default:
           return EmptyTrack.deserialize(track);
       }

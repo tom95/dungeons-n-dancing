@@ -48,6 +48,9 @@ export class DndTrackButtonComponent implements OnInit {
       case 'DropboxTrack':
         this.activeTab = 'dropbox';
         break;
+      case 'DeezerTrack':
+        this.activeTab = 'deezer';
+        break;
     }
   }
 
