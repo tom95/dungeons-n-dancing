@@ -11,6 +11,11 @@ import { TrackChooserYoutubeComponent } from './track-chooser-youtube/track-choo
 import { TrackChooserLocalComponent } from './track-chooser-local/track-chooser-local.component';
 import { TrackChooserDropboxComponent, DropboxFile, DropboxService } from './track-chooser-dropbox/track-chooser-dropbox.component';
 import { PlaybackManager } from './playback-manager';
+import { RemoteComponent } from './remote/remote.component';
+import { routing } from './app.routing';
+import { PlayerComponent } from './player/player.component';
+import { PlaylistStorage } from './playlist-storage';
+import { Websocket } from './websocket';
 
 @NgModule({
   declarations: [
@@ -20,17 +25,22 @@ import { PlaybackManager } from './playback-manager';
     TrackChooserYoutubeComponent,
     TrackChooserLocalComponent,
     TrackChooserDropboxComponent,
-    DropboxFile
+    DropboxFile,
+    RemoteComponent,
+    PlayerComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    NgbModule
+    NgbModule,
+    routing
   ],
   providers: [
     DropboxService,
-    PlaybackManager
+    PlaybackManager,
+    PlaylistStorage,
+    Websocket
   ],
   bootstrap: [AppComponent]
 })

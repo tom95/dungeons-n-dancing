@@ -1,6 +1,9 @@
 import { EventEmitter } from '@angular/core';
+import { genId } from './utils';
 
 export class Track {
+	id: string;
+
 	preloadStartingTime: number;
 	fadeOutDuration: number;
 
@@ -9,6 +12,10 @@ export class Track {
 
 	progress = new EventEmitter<[number,number]>();
 	toggleBuffering = new EventEmitter<boolean>();
+
+	constructor() {
+		this.id = genId('track');
+	}
 
 	setVolume(volume: number) {}
 

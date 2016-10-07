@@ -53,11 +53,14 @@ export class DropboxTrack extends Track {
 		return Promise.resolve({
 			url: this.url,
 			title: this._title,
+			id: this.id,
 			type: 'track-dropbox'
 		});
 	}
 
 	static deserialize(data) {
-		return Promise.resolve(new DropboxTrack(data.title, data.url))
+		let track = new DropboxTrack(data.title, data.url);
+		track.id = data.id;
+		return Promise.resolve(track)
 	}
 }

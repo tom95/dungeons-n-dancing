@@ -5,10 +5,13 @@ export class YoutubeTrack extends Track {
 	start: number;
 	end: number;
 	ytTitle: string;
+
+	volume: number = 1.0;
+
 	frame: HTMLIFrameElement;
 	preparePromise: Function;
 	frameLoaded: boolean = false;
-	volume: number = 1.0;
+	frameId: string;
 
 	constructor(url: string, start: string, end: string, title: string) {
 		super();
@@ -17,8 +20,11 @@ export class YoutubeTrack extends Track {
 		this.start = start === undefined ? -1 : this.translateSeconds(start);
 		this.end = end === undefined ? -1 : this.translateSeconds(end);
 		this.ytTitle = title;
+		this.frameId = Math.random().toString().substring(2);
 
 		window.addEventListener('message', e => {
+			if (e.data.frameId != this.frameId)
+				return;
 			if (e.data.eventPrepared && this.preparePromise) {
 				this.preparePromise(this);
 				this.preparePromise = null;
@@ -63,8 +69,8 @@ export class YoutubeTrack extends Track {
 			this.frame.style.position = 'absolute';
 			this.frame.style.top = '0';
 			this.frame.style.left = '0';
-			// this.frame.style.zIndex = '-1';
-			// this.frame.style.display = 'none';
+			this.frame.style.zIndex = '-1';
+			this.frame.style.display = 'none';
 			document.body.appendChild(this.frame);
 			this.frame.contentWindow.addEventListener('load', () => { this.frameLoaded = true; });
 		} else
@@ -78,7 +84,8 @@ export class YoutubeTrack extends Track {
 					command: 'prepare',
 					url: this.url,
 					start: this.start,
-					end: this.end
+					end: this.end,
+					frameId: this.frameId
 				}, '*');
 			};
 
@@ -110,7 +117,8 @@ export class YoutubeTrack extends Track {
 			end: this.end,
 			url: this.url,
 			title: this.ytTitle,
-			type: 'track-youtube'
+			type: 'track-youtube',
+			id: this.id
 		});
 	}
 
@@ -119,9 +127,11 @@ export class YoutubeTrack extends Track {
 	}
 
 	static deserialize(data) {
-		return Promise.resolve(new YoutubeTrack(data.url,
-												data.start,
-												data.end,
-												data.title));
+		let track = new YoutubeTrack(data.url,
+									 data.start,
+									 data.end,
+									 data.title);
+		track.id = data.id;
+		return Promise.resolve(track);
 	}
 }

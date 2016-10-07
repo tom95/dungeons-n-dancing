@@ -1,0 +1,25 @@
+<div class="container" style="max-width: 480px">
+  <h1 class="text-center">Dungeons &amp; Dancing</h1>
+
+  <dnd-playlist-selector
+    [playlist]="playlist"
+    (selected)="playlist.play()"
+    [remote]="true"
+    *ngFor="let playlist of playlists"></dnd-playlist-selector>
+
+  <div class="">
+    <div class="play-controls">
+        <span class="mdi icon-large"
+            [class.mdi-pause-circle]="playbackProxy.currentTrackPlaying()"
+            [class.mdi-play-circle]="!playbackProxy.currentTrackPlaying()"
+            *ngIf="!playbackProxy.loading"
+            (click)="playbackProxy.togglePlaying()"></span>
+        <span class="mdi icon-large mdi-reload" *ngIf="playbackProxy.loading"></span>
+        <span *ngIf="!playbackProxy.loading"class="mdi mdi-skip-next-circle" (click)="playbackProxy.skipForward()"></span>
+    </div>
+
+    <div class="track-progress-container">
+      <div class="track-progress" style="width: 30%"></div>
+    </div>
+  </div>
+</div>

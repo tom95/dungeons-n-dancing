@@ -8,8 +8,10 @@ import { Playlist } from '../playlist';
 })
 export class PlaylistSelectorComponent implements OnInit {
   @Input() playlist: Playlist;
+  @Input() remote: boolean;
   @Output() selected = new EventEmitter();
   @Output() deleted = new EventEmitter();
+  @Output() play = new EventEmitter();
 
   hovered: boolean = false;
 

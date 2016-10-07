@@ -1,5 +1,6 @@
 
 var reply;
+var frameId;
 
 window.addEventListener('message', function(e) {
 	var host = event.source;
@@ -8,7 +9,9 @@ window.addEventListener('message', function(e) {
 	var command = e.data.command;
 	switch (command) {
 		case 'prepare':
+			frameId = e.data.frameId;
 			reply = function(data) {
+				data.frameId = frameId;
 				window.parent.postMessage(data, hostOrigin);
 			};
 			prepare(e.data.url,

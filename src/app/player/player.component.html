@@ -1,0 +1,84 @@
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-3 location-switcher">
+            <div class="playlist-list">
+                <dnd-playlist-selector
+                    [playlist]="playlist"
+                    (selected)="currentPlaylist = playlist"
+                    (play)="playback.replace(playlist.items)"
+                    (deleted)="storage.playlists.splice(i, 1); currentPlaylist = Playlists[0]"
+                    *ngFor="let playlist of storage.playlists; let i = index">
+                </dnd-playlist-selector>
+            </div>
+            <button (click)="addPlaylist()" class="btn btn-block btn-secondary">
+                Add Playlist
+            </button>
+        </div>
+
+        <div class="col-md-6 right-panel" *ngIf="currentPlaylist">
+
+            <div class="row track-list-editor">
+                <div class="col-md-12">
+                    <button
+                        class="btn btn-sm btn-secondary pull-xs-right"
+                        [class.active]="currentPlaylist.playback.playbackType == 'random'"
+                        (click)="toggleRandomPlayback(currentPlaylist)">
+                        <span class="mdi mdi-shuffle-variant"></span>
+                    </button>
+                    <h2 [textContent]="currentPlaylist.title()"><!--Calm <small>| Hostile City</small>--></h2>
+                    <form>
+                        <div class="form-group">
+                            <dnd-track-button
+                                [track]="track"
+                                (trackSelected)="replaceTrack($event, i)"
+                                (trackDeleted)="deleteTrack($event, i)"
+                                *ngFor="let track of currentPlaylist.items; let i = index">
+                            </dnd-track-button>
+
+                            <button class="btn btn-secondary btn-block"
+                                (click)="addTrack()">Add Track</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!--<div class="row mood-controls">
+                <div class="col-md-12">
+                    <div style="background-color: #FFF59D" class="mood" data-title="Mysterious"></div>
+                    <div style="background-color: #FFEB3B" class="mood" data-title="Scary"></div>
+                    <div style="background-color: #D4E157" class="mood active" data-title="Calm"></div>
+                    <div style="background-color: #FB8C00" class="mood" data-title="Battle"></div>
+                    <div style="background-color: #BF360C" class="mood" data-title="Defeat"></div>
+                    <div style="background-color: #FFEB3B" class="mood" data-title="Victory"></div>
+                </div>
+            </div>-->
+        </div>
+
+        <div class="col-md-3" *ngIf="playback.queue.length">
+            <table class="table table-striped">
+                <tr><th colspan="2">Upcoming</th></tr>
+                <tr *ngFor="let track of playback.queue; let i = index">
+                    <td [textContent]="track.title()"></td>
+                </tr>
+            </table>
+
+            <div class="play-controls">
+                <span class="mdi icon-large"
+                    [class.mdi-pause-circle]="playback.currentTrackPlaying()"
+                    [class.mdi-play-circle]="!playback.currentTrackPlaying()"
+                    *ngIf="!playback.loading"
+                    (click)="playback.togglePlaying()"></span>
+                <span class="mdi icon-large mdi-reload" *ngIf="playback.loading"></span>
+                <span *ngIf="!playback.loading"class="mdi mdi-skip-next-circle" (click)="playback.skipForward()"></span>
+            </div>
+            <div class="track-progress-container">
+                <div class="track-progress" [style.width]="playback.currentTrackProgressPercent() * 100 + '%'"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<template ngbModalContainer></template>

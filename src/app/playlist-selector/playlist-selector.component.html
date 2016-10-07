@@ -5,13 +5,13 @@
 </template>
 
 <div class="playlist-row clearfix" (mouseenter)="hovered = true" (mouseleave)="hovered = false; popover.close()">
-  <div class="pull-xs-right" (click)="playlist.play()">
+  <div class="pull-xs-right" *ngIf="!remote" (click)="play.emit()">
     <span class="mdi mdi-play-circle"></span>
   </div>
 
   <div (click)="selected.emit()">
     {{ playlist.title() }}
-    <button [hidden]="!hovered"
+    <button [hidden]="!hovered || remote"
             [ngbPopover]="playlistSettingsPopover"
             [placement]="'right'"
             #popover="ngbPopover"

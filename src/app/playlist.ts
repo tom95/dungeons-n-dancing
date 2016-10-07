@@ -4,15 +4,18 @@ import { EmptyTrack } from './empty-track';
 import { LocalTrack } from './local-track';
 import { Playback, NormalPlayback, RandomPlayback } from './playback';
 import { PlaybackManager } from './playback-manager';
+import { genId } from './utils';
 
 export class Playlist {
+	id: string;
 	items: Array<Track> = [];
 	playback: Playback;
 	playlistTitle: string;
 	backgroundUrl: string;
 
-	constructor(title, private playbackManager: PlaybackManager) {
+	constructor(title) {
 		this.playlistTitle = title;
+		this.id = genId('playlist');
 	}
 
 	backgroundImageStyle() {
@@ -25,10 +28,6 @@ export class Playlist {
 
 	title(): string {
 		return this.playlistTitle;
-	}
-
-	play() {
-		this.playbackManager.replace(this.items);
 	}
 
 	findStartTrack(): Track {
@@ -44,7 +43,8 @@ export class Playlist {
 			title: this.playlistTitle,
 			backgroundUrl: this.backgroundUrl,
 			tracks: tracks,
-			type: 'playlist'
+			type: 'playlist',
+			id: this.id
 		})).then(playlist => this.playback.serialize(playlist));
 	}
 }

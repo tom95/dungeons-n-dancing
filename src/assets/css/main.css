@@ -3,7 +3,8 @@ html, body, .container-fluid, .container-fluid > .row, .right-panel, .location-s
 }
 
 @font-face {
-	src: url('/assets/fonts/Mrs Eaves OT Roman.otf');
+	/* src: url('/assets/fonts/Mrs Eaves OT Roman.otf'); */
+	src: url('/assets/fonts/MrsEaves Roman.otf');
 	font-family: 'Mrs Eaves';
 }
 
@@ -92,7 +93,6 @@ dnd-track-button:after {
 	align-items: center;
 	justify-content: center;
 	font-size: 28px;
-	margin-right: 24px;
 }
 .play-controls span {
 	margin: 6px;
@@ -105,6 +105,16 @@ dnd-track-button:after {
 	height: 4px;
 	background-color: #8e2b23;
 	border-radius: 99px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.track-progress-container {
+	height: 4px;
+	position: relative;
+	width: 100%;
+	border-radius: 99px;
+	background-color: rgba(150, 150, 150, 0.2);
 }
 
 .music-file ul {

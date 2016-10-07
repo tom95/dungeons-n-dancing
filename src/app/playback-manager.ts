@@ -1,5 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Track } from './track';
+import { PlaylistStorage } from './playlist-storage';
+import { Websocket } from './websocket';
 
 class PlayableTrack {
 	toggleBuffering = new EventEmitter<boolean>();
@@ -51,10 +53,39 @@ class PlayableTrack {
 	}
 }
 
+export class IPlaybackManager {
+	queue: PlayableTrack[];
+	loading: boolean;
+	fadeDuration: number;
+	currentTrackProgressPercent(): number { return 0; }
+	currentTrackPlaying(): boolean { return false; }
+	currentTrack: PlayableTrack;
+	switchTo(index: number) {}
+	skipForward() {
+		this.switchTo(1);
+	}
+	clear() {}
+	pause() {}
+	play() {}
+	togglePlaying() {
+		if (this.currentTrackPlaying)
+			this.pause();
+		else
+			this.play();
+	}
+
+	replace(queue: Track[]) {}
+	add(track: Track) {}
+	remove(index: number) {}
+}
+
+export class PlaybackManagerProxy extends IPlaybackManager {
+}
+
 let savePlaybackManagerInstanceCount = 0;
 
 @Injectable()
-export class PlaybackManager {
+export class PlaybackManager extends IPlaybackManager {
 	queue: PlayableTrack[] = [];
 
 	loading: boolean = false;
@@ -66,10 +97,37 @@ export class PlaybackManager {
 	private preparingNextTrack: boolean = false;
 	private fadingCurrentTrack: boolean = false;
 
-	constructor() {
+	constructor(private storage: PlaylistStorage, private socket: Websocket) {
+		super();
+
 		savePlaybackManagerInstanceCount++;
 		if (savePlaybackManagerInstanceCount > 1)
 			throw new Error('Too many playback managers instantiated D:');
+
+		this.socket.connect('ws://localhost:4200').forEach(e => {
+			const COMMANDS = {
+				play: this.play,
+				pause: this.pause,
+				clear: this.clear,
+				switchTo: this.switchTo,
+				fadeDuration: arg => this.fadeDuration = arg,
+				replace: this.replace,
+				add: this.add,
+				remove: this.remove
+			};
+			function beginsWith(str, prefix) {
+				return str.substring(0, prefix.length) == prefix;
+			}
+			let f = COMMANDS[e.data.command];
+			let arg = e.data.argument;
+			if (arg && typeof arg == 'string') {
+				if (beginsWith(arg, 'track:'))
+					arg = this.storage.findTrackById(arg);
+				else if (beginsWith(arg, 'playlist:'))
+					arg = this.storage.findPlaylistById(arg);
+			}
+			f(arg)
+		});
 	}
 
 	currentTrackProgressPercent() {
@@ -98,8 +156,8 @@ export class PlaybackManager {
 
 		this.currentTrackSubscriptions = [
 			track.toggleBuffering.subscribe(loading => this.loading = loading),
-			track.progress.subscribe((current, total) => {
-				let remaining = (total - current) * 1000;
+			track.progress.subscribe(p => {
+				let remaining = (p[1] - p[0]) * 1000;
 
 				if (remaining <= this.fadeDuration && !this.fadingCurrentTrack) {
 					this.skipForward();
@@ -122,10 +180,6 @@ export class PlaybackManager {
 		this.skipForward();
 	}
 
-	skipForward() {
-		this.switchTo(1);
-	}
-
 	playNext(track: Track) {
 		this.queue.splice(1, 0, new PlayableTrack(track));
 	}
@@ -141,13 +195,6 @@ export class PlaybackManager {
 
 	play() {
 		this.currentTrack.play();
-	}
-
-	togglePlaying() {
-		if (this.currentTrackPlaying)
-			this.pause();
-		else
-			this.play();
 	}
 
 	replace(queue: Track[]) {
