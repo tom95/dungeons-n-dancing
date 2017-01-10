@@ -23,7 +23,7 @@ export class DropboxService {
   constructor(private http: Http) {}
 
   rpc(method, args): Promise<any> {
-    if (!this.loadAccessToken)
+    if (!this.loadAccessToken())
       return Promise.reject('No access token provided');
 
     return this.http
@@ -134,7 +134,11 @@ export class TrackChooserDropboxComponent implements OnInit {
 
   ngOnInit() {
     if (this.dropbox.authenticated())
-      this.dropbox.listFolder('').then(files => this.files = files);
+      this.load();
+  }
+
+  load() {
+    this.dropbox.listFolder('').then(files => this.files = files);
   }
 
   authorize() {
@@ -143,6 +147,7 @@ export class TrackChooserDropboxComponent implements OnInit {
     let listener = (e) => {
       let accessToken = e.data.match(/access_token=([^&]+)/)[1];
       localStorage.setItem('dropbox-token', accessToken);
+      this.load();
       window.removeEventListener('message', listener);
     };
     window.addEventListener('message', listener, false);

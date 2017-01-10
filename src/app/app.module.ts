@@ -10,6 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TrackChooserYoutubeComponent } from './track-chooser-youtube/track-chooser-youtube.component';
 import { TrackChooserLocalComponent } from './track-chooser-local/track-chooser-local.component';
 import { TrackChooserDropboxComponent, DropboxFile, DropboxService } from './track-chooser-dropbox/track-chooser-dropbox.component';
+import { TrackChooserDeezerComponent, DeezerService } from './track-chooser-deezer/track-chooser-deezer.component';
 import { PlaybackManager } from './playback-manager';
 import { RemoteComponent } from './remote/remote.component';
 import { routing } from './app.routing';
@@ -25,6 +26,7 @@ import { Websocket } from './websocket';
     TrackChooserYoutubeComponent,
     TrackChooserLocalComponent,
     TrackChooserDropboxComponent,
+    TrackChooserDeezerComponent,
     DropboxFile,
     RemoteComponent,
     PlayerComponent
@@ -38,6 +40,7 @@ import { Websocket } from './websocket';
   ],
   providers: [
     DropboxService,
+    DeezerService,
     PlaybackManager,
     PlaylistStorage,
     Websocket

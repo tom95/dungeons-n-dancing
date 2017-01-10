@@ -18,7 +18,7 @@ export class PlayerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.storage.load().then(p => this.currentPlaylist = this.storage.playlists[0]);
+    this.storage.load().then(p => this.currentPlaylist = this.storage.playlists[0]).catch(e => console.log('Loading playlists failed:', e));
   }
 
   toggleRandomPlayback(playlist) {
