@@ -15,22 +15,14 @@ import { DndTrackButtonComponent } from './dnd-track-button.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropboxTrack } from '../dropbox-track';
 
-@Component({ selector: 'dnd-track-chooser-local', template: '' }) class TestLocalComponent {
+@Component({
+  selector: 'dnd-track-chooser-dropbox,dnd-track-chooser-youtube,dnd-track-chooser-local,dnd-track-chooser-deezer',
+  template: ''
+}) class TestChooserComponent {
   @Input() track;
   @Output() created = new EventEmitter();
 }
-@Component({ selector: 'dnd-track-chooser-deezer', template: '' }) class TestDeezerComponent {
-  @Input() track;
-  @Output() created = new EventEmitter();
-}
-@Component({ selector: 'dnd-track-chooser-youtube', template: '' }) class TestYoutubeComponent {
-  @Input() track;
-  @Output() created = new EventEmitter();
-}
-@Component({ selector: 'dnd-track-chooser-dropbox', template: '' }) class TestDropboxComponent {
-  @Input() track;
-  @Output() created = new EventEmitter();
-}
+
 @Component({ template: '<dnd-track-button></dnd-track-button><template ngbModalContainer></template>' })
 class TestHostComponent {
   @ViewChild(DndTrackButtonComponent) trackButtonComponent: any;
@@ -46,10 +38,7 @@ describe('Component: DndTrackButton', () => {
       declarations: [
         DndTrackButtonComponent,
         TestHostComponent,
-        TestLocalComponent,
-        TestDeezerComponent,
-        TestYoutubeComponent,
-        TestDropboxComponent
+        TestChooserComponent
       ],
       imports: [
         NgbModule.forRoot(),
@@ -76,10 +65,11 @@ describe('Component: DndTrackButton', () => {
     expect(fixture.debugElement.query(By.css('.track-title')).nativeElement.textContent).toEqual('Test Title');
   });
 
-  it('should open the chooser modal', () => {
+  it('should open the chooser modal on the right tab', () => {
     expect(fixture.debugElement.query(By.css('.modal'))).toBeNull();
     openButton.triggerEventHandler('click', null);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('.modal'))).not.toBeNull();
+    expect(comp.activeTab).toEqual('dropbox');
   });
 });
