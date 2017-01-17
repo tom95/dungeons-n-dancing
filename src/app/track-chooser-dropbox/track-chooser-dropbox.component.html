@@ -6,8 +6,8 @@
 <div *ngIf="dropbox.authenticated()">
   <ul>
     <li *ngFor="let file of files">
-      <dropbox-file [file]="file" (selected)="fileSelected($event)">
-      </dropbox-file>
+      <dnd-dropbox-file [file]="file" (selected)="fileSelected($event)">
+      </dnd-dropbox-file>
     </li>
   </ul>
 </div>

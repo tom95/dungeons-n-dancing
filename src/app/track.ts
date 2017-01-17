@@ -2,36 +2,36 @@ import { EventEmitter } from '@angular/core';
 import { genId } from './utils';
 
 export class Track {
-	id: string;
+  id: string;
 
-	preloadStartingTime: number;
-	fadeOutDuration: number;
+  preloadStartingTime: number;
+  fadeOutDuration: number;
 
-	currentProgress: number;
-	totalDuration: number;
+  currentProgress: number;
+  totalDuration: number;
 
-	progress = new EventEmitter<[number,number]>();
-	toggleBuffering = new EventEmitter<boolean>();
+  progress = new EventEmitter<[number, number]>();
+  toggleBuffering = new EventEmitter<boolean>();
 
-	constructor() {
-		this.id = genId('track');
-	}
+  static deserialize(data: any): Promise<Track> { return Promise.resolve(null); }
 
-	setVolume(volume: number) {}
+  constructor() {
+    this.id = genId('track');
+  }
 
-	getVolume(): number { return 1.0; }
+  setVolume(volume: number) {}
 
-	serialize(): any { return {}; }
+  getVolume(): number { return 1.0; }
 
-	title(): string { return ''; }
+  serialize(): any { return {}; }
 
-	icon(): string { return ''; }
+  title(): string { return ''; }
 
-	setPlaying(playing: boolean) {}
+  icon(): string { return ''; }
 
-	prepare(): Promise<void> { return Promise.resolve(); }
+  setPlaying(playing: boolean) {}
 
-	free() {}
+  prepare(): Promise<void> { return Promise.resolve(); }
 
-	static deserialize(data: any): Promise<Track> { return Promise.resolve(null); }
+  free() {}
 }

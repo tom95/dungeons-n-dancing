@@ -1,5 +1,5 @@
 import { Component, Injectable, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Http, Response, RequestOptions, Headers } from '@angular/http';
+import { Http, RequestOptions, Headers } from '@angular/http';
 import { Track } from '../track';
 import { DropboxTrack } from '../dropbox-track';
 
@@ -23,8 +23,9 @@ export class DropboxService {
   constructor(private http: Http) {}
 
   rpc(method, args): Promise<any> {
-    if (!this.loadAccessToken())
+    if (!this.loadAccessToken()) {
       return Promise.reject('No access token provided');
+    }
 
     return this.http
       .post('https://api.dropboxapi.com/2/' + method,
@@ -41,8 +42,9 @@ export class DropboxService {
   }
 
   loadAccessToken() {
-    if (this.accessToken)
+    if (this.accessToken) {
       return this.accessToken;
+    }
     return this.accessToken = localStorage.getItem('dropbox-token');
   }
 
@@ -68,14 +70,15 @@ export class DropboxService {
           path: file.path_lower,
           url: file.url,
           dropboxId: file.id,
-          isFolder: file['.tag'] == 'folder',
+          isFolder: file['.tag'] === 'folder',
           isAudioFile: !!file.path_lower.match(/\.(mp3|ogg)$/i),
           children: null
         })));
-        if (data.has_more)
+        if (data.has_more) {
           this.rpc('files/list_folder/continue', { cursor: data.cursor }).then(receiveFiles).catch(reject);
-        else
+        } else {
           resolve(list);
+        }
       };
 
       this.rpc('files/list_folder', { path: path }).then(receiveFiles).catch(reject);
@@ -84,7 +87,7 @@ export class DropboxService {
 }
 
 @Component({
-  selector: 'dropbox-file',
+  selector: 'dnd-dropbox-file',
   template: ` <a href="#" (click)="select()" [style.opacity]="file.isFolder || file.isAudioFile ? 1.0 : 0.6">
     <span class="mdi"
       [class.mdi-folder]="file.isFolder"
@@ -94,11 +97,11 @@ export class DropboxService {
   </a>
   <ul *ngIf="file.isFolder && file.children" [style.height]="expanded ? 'auto' : 0" style="overflow:hidden">
     <li *ngFor="let cfile of file.children">
-      <dropbox-file [file]="cfile" (selected)="selected.emit($event)"></dropbox-file>
+      <dnd-dropbox-file [file]="cfile" (selected)="selected.emit($event)"></dnd-dropbox-file>
     </li>
   <ul>`
 })
-export class DropboxFile implements OnInit {
+export class DropboxFileComponent implements OnInit {
   @Input() file: IDropboxFile;
   @Output() selected = new EventEmitter<IDropboxFile>();
 
@@ -110,11 +113,13 @@ export class DropboxFile implements OnInit {
 
   select() {
     if (this.file.isFolder) {
-      if (this.file.children === null)
+      if (this.file.children === null) {
         this.dropbox.listFolder(this.file.path).then(files => this.file.children = files);
+      }
       this.expanded = !this.expanded;
-    } else
+    } else {
       this.selected.emit(this.file);
+    }
   }
 }
 
@@ -133,8 +138,9 @@ export class TrackChooserDropboxComponent implements OnInit {
   constructor(private http: Http, private dropbox: DropboxService) { }
 
   ngOnInit() {
-    if (this.dropbox.authenticated())
+    if (this.dropbox.authenticated()) {
       this.load();
+    }
   }
 
   load() {
@@ -142,7 +148,9 @@ export class TrackChooserDropboxComponent implements OnInit {
   }
 
   authorize() {
-    let w = window.open('https://www.dropbox.com/1/oauth2/authorize?client_id=' + CLIENT_ID + '&redirect_uri=' + REDIRECT_URI + '&response_type=token');
+    window.open('https://www.dropbox.com/1/oauth2/authorize?client_id=' + CLIENT_ID +
+                '&redirect_uri=' + REDIRECT_URI +
+                '&response_type=token');
 
     let listener = (e) => {
       let accessToken = e.data.match(/access_token=([^&]+)/)[1];
@@ -156,10 +164,11 @@ export class TrackChooserDropboxComponent implements OnInit {
   fileSelected(file: IDropboxFile) {
     this.dropbox.listSharedLinks(file.dropboxId)
       .then(links => {
-        if (links.length > 0)
+        if (links.length > 0) {
           return links[0].url;
-        else
+        } else {
           return this.dropbox.createSharedLinkWithSettings(file.dropboxId);
+        }
       })
       .then(url => url.replace('dl=0', 'raw=1'))
       .then(url => this.created.emit(new DropboxTrack(file.title, url)));

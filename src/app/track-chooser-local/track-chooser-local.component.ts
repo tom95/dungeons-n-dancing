@@ -1,14 +1,11 @@
 import {
   Component,
-  EventEmitter,
   Injectable,
   OnInit,
   Input,
-  Output,
   Pipe,
   PipeTransform
 } from '@angular/core';
-import { Track } from '../track';
 
 interface IMusicFile {
   parent: IMusicFile;
@@ -18,21 +15,22 @@ interface IMusicFile {
 }
 
 @Component({
-  selector: 'music-file',
+  selector: 'dnd-music-file',
   template: ` <a href="#" (click)="select(file)" [textContent]="file.name"></a>
   <ul [style.height]="file.shown ? 'auto' : 0">
     <li *ngFor="let file of files | showOnlyOpenFolders">
-      <music-file [files]="file.files"></music-file>
+      <dnd-music-file [files]="file.files"></dnd-music-file>
     </li>
   <ul>`,
   // FIXME directives: [MusicFile]
 })
-export class MusicFile {
+export class MusicFileComponent {
   @Input() files: Array<IMusicFile>;
 
   select(file: IMusicFile) {
-    if (file.isDirectory)
+    if (file.isDirectory) {
       file.shown = true;
+    }
     // TODO else
   }
 }

@@ -5,7 +5,7 @@
 </template>
 
 <div class="playlist-row clearfix" (mouseenter)="hovered = true" (mouseleave)="hovered = false; popover.close()">
-  <div class="pull-xs-right" *ngIf="!remote" (click)="play.emit()">
+  <div class="float-right" *ngIf="!remote" (click)="play.emit()">
     <span class="mdi mdi-play-circle"></span>
   </div>
 

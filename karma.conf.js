@@ -32,6 +32,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
+    mime: { 'text/x-typescript': ['ts','tsx'] },
     browsers: ['Chrome'],
     singleRun: false
   });

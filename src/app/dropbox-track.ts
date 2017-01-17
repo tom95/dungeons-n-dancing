@@ -1,66 +1,68 @@
 import { Track } from './track';
 
 export class DropboxTrack extends Track {
-	audio: HTMLAudioElement;
+  audio: HTMLAudioElement;
 
-	constructor(public _title: string, public url: string) {
-		super();
+  static deserialize(data) {
+    let track = new DropboxTrack(data.title, data.url);
+    track.id = data.id;
+    return Promise.resolve(track);
+  }
 
-		this._title = this._title.match(/^([^.]+)/)[1] || this._title;
-	}
+  constructor(public _title: string, public url: string) {
+    super();
 
-	prepare() {
-		return new Promise(resolve => {
-			this.audio = new Audio(this.url);
-			this.audio.preload = 'auto';
-			this.audio.addEventListener('canplaythrough', () => resolve());
-			this.audio.addEventListener('ended', () => this.progress.emit([this.audio.duration, this.audio.duration]));
-			this.audio.addEventListener('timeupdate', () => {
-				this.progress.emit([this.audio.currentTime, this.audio.duration])
-				this.currentProgress = this.audio.currentTime || 0;
-				this.totalDuration = this.audio.duration || 0;
+    this._title = this._title.match(/^([^.]+)/)[1] || this._title;
+  }
 
-				if (this.totalDuration < 1)
-					return;
-			});
-		})
-	}
+  prepare() {
+    return new Promise<void>(resolve => {
+      this.audio = new Audio(this.url);
+      this.audio.preload = 'auto';
+      this.audio.addEventListener('canplaythrough', () => resolve());
+      this.audio.addEventListener('ended', () => this.progress.emit([this.audio.duration, this.audio.duration]));
+      this.audio.addEventListener('timeupdate', () => {
+        this.progress.emit([this.audio.currentTime, this.audio.duration]);
+        this.currentProgress = this.audio.currentTime || 0;
+        this.totalDuration = this.audio.duration || 0;
 
-	title() {
-		return this._title;
-	}
+        if (this.totalDuration < 1) {
+          return;
+        }
+      });
+    });
+  }
 
-	free() {
-		this.audio.src = null;
-	}
+  title() {
+    return this._title;
+  }
 
-	icon() {
-		return 'mdi-dropbox';
-	}
+  free() {
+    this.audio.src = null;
+  }
 
-	setVolume(volume: number) {
-		this.audio.volume = volume;
-	}
+  icon() {
+    return 'mdi-dropbox';
+  }
 
-	setPlaying(playing: boolean) {
-		if (playing)
-			this.audio.play();
-		else
-			this.audio.pause();
-	}
+  setVolume(volume: number) {
+    this.audio.volume = volume;
+  }
 
-	serialize() {
-		return Promise.resolve({
-			url: this.url,
-			title: this._title,
-			id: this.id,
-			type: 'track-dropbox'
-		});
-	}
+  setPlaying(playing: boolean) {
+    if (playing) {
+      this.audio.play();
+    } else {
+      this.audio.pause();
+    }
+  }
 
-	static deserialize(data) {
-		let track = new DropboxTrack(data.title, data.url);
-		track.id = data.id;
-		return Promise.resolve(track)
-	}
+  serialize() {
+    return Promise.resolve({
+      url: this.url,
+      title: this._title,
+      id: this.id,
+      type: 'track-dropbox'
+    });
+  }
 }

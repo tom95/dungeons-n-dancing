@@ -7,9 +7,7 @@ import { PlaybackManagerProxy } from '../playback-manager';
   styleUrls: ['./remote.component.scss']
 })
 export class RemoteComponent implements OnInit {
-  private playbackProxy = new PlaybackManagerProxy();
-
-  constructor() {
+  constructor(private playbackProxy: PlaybackManagerProxy) {
   }
 
   ngOnInit() {

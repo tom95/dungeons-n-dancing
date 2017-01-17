@@ -1,4 +1,4 @@
-import { OnInit, ElementRef, HostListener, Component } from '@angular/core';
+import { OnInit, HostListener, Component } from '@angular/core';
 
 import { EmptyTrack } from '../empty-track';
 import { PlaylistStorage } from '../playlist-storage';
@@ -22,14 +22,15 @@ export class PlayerComponent implements OnInit {
   }
 
   toggleRandomPlayback(playlist) {
-    playlist.playback = playlist.playback.playbackType == 'random' ?
+    playlist.playback = playlist.playback.playbackType === 'random' ?
       new NormalPlayback() : new RandomPlayback();
   }
 
   addPlaylist() {
-    let name = prompt('Name of playlist?')
-    if (!name)
+    let name = prompt('Name of playlist?');
+    if (!name) {
       return;
+    }
 
     let playlist = new Playlist(name);
     this.storage.playlists.push(playlist);

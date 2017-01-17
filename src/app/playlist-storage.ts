@@ -16,8 +16,9 @@ export class PlaylistStorage {
   load() {
     let data = localStorage.getItem('playlists');
     this.playlists = [];
-    if (!data)
+    if (!data) {
       return Promise.resolve([]);
+    }
 
     let p: Promise<Playlist>[] = JSON.parse(data).map(playlist => this.deserializePlaylist(playlist));
 
@@ -28,14 +29,15 @@ export class PlaylistStorage {
   }
 
   findPlaylistById(id: string): Playlist {
-    return this.playlists.find(p => p.id == id);
+    return this.playlists.find(p => p.id === id);
   }
 
   findTrackById(id: string): Track {
     for (let i = 0; i < this.playlists.length; i++) {
-      let track = this.playlists[i].items.find(t => t.id == id);
-      if (track)
+      let track = this.playlists[i].items.find(t => t.id === id);
+      if (track) {
         return track;
+      }
     }
     return null;
   }
@@ -43,8 +45,9 @@ export class PlaylistStorage {
   save() {
     // FIXME this is here to make sure on error not all data is deleted,
     // but it also means that we can't delete al playlists
-    if (!this.playlists || !this.playlists.length)
+    if (!this.playlists || !this.playlists.length) {
       return;
+    }
 
     Promise.all(this.playlists.map((playlist) => {
       return playlist.serialize();

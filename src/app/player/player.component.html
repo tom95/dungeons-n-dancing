@@ -21,7 +21,7 @@
             <div class="row track-list-editor">
                 <div class="col-md-12">
                     <button
-                        class="btn btn-sm btn-secondary pull-xs-right"
+                        class="btn btn-sm btn-secondary float-right"
                         [class.active]="currentPlaylist.playback.playbackType == 'random'"
                         (click)="toggleRandomPlayback(currentPlaylist)">
                         <span class="mdi mdi-shuffle-variant"></span>
@@ -80,5 +80,3 @@
 
     </div>
 </div>
-
-<template ngbModalContainer></template>

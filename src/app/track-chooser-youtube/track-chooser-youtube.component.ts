@@ -23,8 +23,9 @@ export class TrackChooserYoutubeComponent implements OnInit {
   }
 
   load() {
-    if (this.track.constructor.name != 'YoutubeTrack')
+    if (this.track.constructor.name !== 'YoutubeTrack') {
       return;
+    }
 
     let t = this.track as YoutubeTrack;
     this.youtubeTitle = t.ytTitle;

@@ -1,17 +1,11 @@
 import {
   Component,
   EventEmitter,
-  Injectable,
   OnInit,
   Input,
-  Output,
-  Pipe,
-  PipeTransform
+  Output
 } from '@angular/core';
 import { Track } from '../track';
-import { YoutubeTrack } from '../youtube-track';
-import { EmptyTrack } from '../empty-track';
-import { LocalTrack } from '../local-track';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -21,7 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class DndTrackButtonComponent implements OnInit {
 
-  @Input() track : Track;
+  @Input() track: Track;
   @Output() trackSelected = new EventEmitter<Track>();
   @Output() trackDeleted = new EventEmitter<Track>();
 
@@ -33,7 +27,8 @@ export class DndTrackButtonComponent implements OnInit {
   }
 
   openChooseModal(trackModal) {
-    this.modalService.open(trackModal, { size: 'lg' }).result
+    this.modalService.open(trackModal, { size: 'lg' })
+      .result
       .then(result => this.trackSelected.emit(result), () => 0);
 
     switch (this.track.constructor.name) {

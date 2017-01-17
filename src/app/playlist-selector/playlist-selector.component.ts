@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Output, OnInit, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { Playlist } from '../playlist';
 
 @Component({
@@ -21,7 +21,8 @@ export class PlaylistSelectorComponent implements OnInit {
   }
 
   askDelete() {
-    if (confirm('Delete this playlist?'))
-      return this.deleted.emit();
+    if (confirm('Delete this playlist?')) {
+      this.deleted.emit();
+    }
   }
 }

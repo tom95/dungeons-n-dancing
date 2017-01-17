@@ -117,7 +117,7 @@ dnd-track-button:after {
 	background-color: rgba(150, 150, 150, 0.2);
 }
 
-.music-file ul {
+.dnd-music-file ul {
 	overflow: hidden;
 }
 

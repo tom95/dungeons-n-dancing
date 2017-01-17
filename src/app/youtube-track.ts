@@ -1,137 +1,141 @@
 import { Track } from './track';
 
 export class YoutubeTrack extends Track {
-	url: string;
-	start: number;
-	end: number;
-	ytTitle: string;
+  url: string;
+  start: number;
+  end: number;
+  ytTitle: string;
 
-	volume: number = 1.0;
+  volume: number = 1.0;
 
-	frame: HTMLIFrameElement;
-	preparePromise: Function;
-	frameLoaded: boolean = false;
-	frameId: string;
+  frame: HTMLIFrameElement;
+  preparePromise: Function;
+  frameLoaded: boolean = false;
+  frameId: string;
 
-	constructor(url: string, start: string, end: string, title: string) {
-		super();
+  static deserialize(data) {
+    let track = new YoutubeTrack(data.url,
+                   data.start,
+                   data.end,
+                   data.title);
+    track.id = data.id;
+    return Promise.resolve(track);
+  }
 
-		this.url = url;
-		this.start = start === undefined ? -1 : this.translateSeconds(start);
-		this.end = end === undefined ? -1 : this.translateSeconds(end);
-		this.ytTitle = title;
-		this.frameId = Math.random().toString().substring(2);
+  constructor(url: string, start: string, end: string, title: string) {
+    super();
 
-		window.addEventListener('message', e => {
-			if (e.data.frameId != this.frameId)
-				return;
-			if (e.data.eventPrepared && this.preparePromise) {
-				this.preparePromise(this);
-				this.preparePromise = null;
-				return;
-			}
-			if (e.data.eventProgress) {
-				this.currentProgress = e.data.current;
-				this.totalDuration = e.data.total;
-				return this.progress.emit([e.data.current, e.data.total]);
-			}
-			if (e.data.eventToggleBuffering)
-				return this.toggleBuffering.emit(e.data.buffering);
-		});
-	}
+    this.url = url;
+    this.start = start === undefined ? -1 : this.translateSeconds(start);
+    this.end = end === undefined ? -1 : this.translateSeconds(end);
+    this.ytTitle = title;
+    this.frameId = Math.random().toString().substring(2);
 
-	getVolume(): number {
-		return this.volume;
-	}
+    window.addEventListener('message', e => {
+      if (e.data.frameId !== this.frameId) {
+        return;
+      }
+      if (e.data.eventPrepared && this.preparePromise) {
+        this.preparePromise(this);
+        this.preparePromise = null;
+        return;
+      }
+      if (e.data.eventProgress) {
+        this.currentProgress = e.data.current;
+        this.totalDuration = e.data.total;
+        return this.progress.emit([e.data.current, e.data.total]);
+      }
+      if (e.data.eventToggleBuffering) {
+        return this.toggleBuffering.emit(e.data.buffering);
+      }
+    });
+  }
 
-	setVolume(volume: number) {
-		this.volume = volume;
-		this.frame.contentWindow.postMessage({
-			command: 'setVolume',
-			volume
-		}, '*');
-	}
+  getVolume(): number {
+    return this.volume;
+  }
 
-	translateSeconds(sec) {
-		if (typeof sec == 'string' && sec.indexOf(':') >= 0) {
-			let parts = sec.split(':');
-			return parseInt(parts[0]) * 60 + parseInt(parts[1]);
-		}
-		return sec;
-	}
+  setVolume(volume: number) {
+    this.volume = volume;
+    this.frame.contentWindow.postMessage({
+      command: 'setVolume',
+      volume
+    }, '*');
+  }
 
-	prepare() {
-		if (!this.frame) {
-			this.frame = document.createElement('iframe');
-			this.frame.src = '/assets/youtube.html';
-			this.frame.width = '640';
-			this.frame.height = '390';
-			this.frame.style.position = 'absolute';
-			this.frame.style.top = '0';
-			this.frame.style.left = '0';
-			this.frame.style.zIndex = '-1';
-			this.frame.style.display = 'none';
-			document.body.appendChild(this.frame);
-			this.frame.contentWindow.addEventListener('load', () => { this.frameLoaded = true; });
-		} else
-			document.body.appendChild(this.frame);
+  translateSeconds(sec) {
+    if (typeof sec === 'string' && sec.indexOf(':') >= 0) {
+      let parts = sec.split(':');
+      return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    }
+    return sec;
+  }
 
-		return new Promise((resolve, reject) => {
-			let startPrepare = () => {
-				this.preparePromise = resolve;
+  prepare() {
+    if (!this.frame) {
+      this.frame = document.createElement('iframe');
+      this.frame.src = '/assets/youtube.html';
+      this.frame.width = '640';
+      this.frame.height = '390';
+      this.frame.style.position = 'absolute';
+      this.frame.style.top = '0';
+      this.frame.style.left = '0';
+      this.frame.style.zIndex = '-1';
+      this.frame.style.display = 'none';
+      document.body.appendChild(this.frame);
+      this.frame.contentWindow.addEventListener('load', () => { this.frameLoaded = true; });
+    } else {
+      document.body.appendChild(this.frame);
+    }
 
-				this.frame.contentWindow.postMessage({
-					command: 'prepare',
-					url: this.url,
-					start: this.start,
-					end: this.end,
-					frameId: this.frameId
-				}, '*');
-			};
+    return new Promise<void>((resolve, reject) => {
+      let startPrepare = () => {
+        this.preparePromise = resolve;
 
-			if (this.frameLoaded)
-				startPrepare();
-			else
-				this.frame.contentWindow.addEventListener('load', () => startPrepare());
-		});
-	}
+        this.frame.contentWindow.postMessage({
+          command: 'prepare',
+          url: this.url,
+          start: this.start,
+          end: this.end,
+          frameId: this.frameId
+        }, '*');
+      };
 
-	title() {
-		return this.ytTitle;
-	}
+      if (this.frameLoaded) {
+        startPrepare();
+      } else {
+        this.frame.contentWindow.addEventListener('load', () => startPrepare());
+      }
+    });
+  }
 
-	setPlaying(playing: boolean) {
-		this.frame.contentWindow.postMessage({
-			command: 'setPlaying',
-			playing
-		}, '*');
-	}
+  title() {
+    return this.ytTitle;
+  }
 
-	icon(): string {
-		return 'mdi-youtube-play';
-	}
+  setPlaying(playing: boolean) {
+    this.frame.contentWindow.postMessage({
+      command: 'setPlaying',
+      playing
+    }, '*');
+  }
 
-	serialize() {
-		return Promise.resolve({
-			start: this.start,
-			end: this.end,
-			url: this.url,
-			title: this.ytTitle,
-			type: 'track-youtube',
-			id: this.id
-		});
-	}
+  icon(): string {
+    return 'mdi-youtube-play';
+  }
 
-	free() {
-		this.frame.parentNode.removeChild(this.frame);
-	}
+  serialize() {
+    return Promise.resolve({
+      start: this.start,
+      end: this.end,
+      url: this.url,
+      title: this.ytTitle,
+      type: 'track-youtube',
+      id: this.id
+    });
+  }
 
-	static deserialize(data) {
-		let track = new YoutubeTrack(data.url,
-									 data.start,
-									 data.end,
-									 data.title);
-		track.id = data.id;
-		return Promise.resolve(track);
-	}
+  free() {
+    this.frame.parentNode.removeChild(this.frame);
+  }
 }
