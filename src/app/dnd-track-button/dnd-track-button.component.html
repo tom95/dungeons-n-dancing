@@ -8,7 +8,7 @@
 	</div>
 </div>
 
-<span [textContent]="track.title()"></span>
+<span class="track-title" [textContent]="track.title()"></span>
 
 <template #trackModal let-c="close" let-d="dismiss">
 	<div class="modal-header">
@@ -50,11 +50,11 @@
 					(created)="c($event)">
 				</dnd-track-chooser-dropbox>
 
-		<dnd-track-chooser-deezer
+				<dnd-track-chooser-deezer
 					[hidden]="activeTab != 'deezer'"
 					[track]="track"
 					(created)="c($event)">
-		</dnd-track-chooser-deezer>
+				</dnd-track-chooser-deezer>
 
 			</div>
 		</div>
